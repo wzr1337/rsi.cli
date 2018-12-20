@@ -2,7 +2,7 @@
 
 <center>
 
-![RSI.cli](https://github.com/wzr1337/rsi.cli/blob/master/assets/logo.png)
+![RSI.cli](https://raw.githubusercontent.com/wzr1337/rsi.cli/master/assets/logo.png)
 
 </center>
 
