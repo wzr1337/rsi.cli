@@ -1,0 +1,344 @@
+import * as path from "path";
+import mustache from "mustache";
+import * as fs from "fs";
+import { Readable } from "stream";
+import File from "vinyl";
+
+export interface ISchemaClass {
+  name: string,
+  properties?: {
+    type: string,
+    name: string
+  }[]
+}
+
+export interface ISchemaEnum {
+  name: string,
+  belongsTo: string,
+  properties: string[]
+}
+
+export interface ISchemaType {
+  name: string
+}
+
+export interface ISchemaReference {
+  from: string,
+  to: string,
+  property: string
+}
+
+export interface ISchemaNameSpace {
+  name: string,
+  classes?: ISchemaClass[],
+  enums?: ISchemaEnum[],
+  types?: ISchemaType[],
+  references?: ISchemaReference[]
+}
+export interface ISchema {
+  namespaces: ISchemaNameSpace[]
+}
+
+const SAMPLEDATA:ISchema = {
+  namespaces: [
+    {
+      name: "chassis",
+      classes: [
+        {
+          name: "wheelsObject",
+          properties: [
+            { 
+              name: "position",
+              type: "enum"
+            },
+            { 
+              name: "name",
+              type: "String"
+            },
+            {
+              name: "rimTypes",
+              type: "rimType[]"
+            }
+          ]
+        },
+        {
+          name: "rimTypes",
+          properties: [
+            { 
+              name: "name",
+              type: "string"
+            }
+          ]
+        }
+      ],
+      enums: [
+        {
+          name: "position",
+          belongsTo: "chassis",
+          properties: [
+            "FL", "FR", "RR", "RL", "spare"
+          ]
+        }
+      ],
+      references: [
+        { 
+          from: "chassis.wheelsObject",
+          to: "chassis.rimTypes",
+          property: "rimTypes"},
+        { 
+          from: "chassis.rimTypes",
+          to: "chassis.rimTypes",
+          property: "parent"
+        },
+        { 
+          from: "chassis.wheelsObject",
+          to: "chassis position",
+          property: "position"
+        }
+      ]
+    },
+    {
+      name: "fleet",
+      classes: [
+        {
+          name: "vehicles",
+          properties: [
+            { 
+              name: "wheels",
+              type: "wheelsObject"
+            }
+          ]
+        }
+      ],
+      references: [
+        { 
+          from: "fleet.vehicles", 
+          to: "chassis.wheelsObject", 
+          property: "wheels"
+        }
+      ]
+    }
+  ]
+}
+
+
+/**
+ * parses a schema from RSI definitions
+ * @param  {String}   schemaPath path to RSI schema
+ */
+export async function getSampleSchema():Promise<ISchema> {
+  return SAMPLEDATA;
+}
+
+/**
+ * renderes plantuml syntax from RSI definitions
+ * @param  {String}   schemaPath path to RSI schema
+ */
+export async function render(schemaData:ISchema):Promise<Readable> {
+  if(! schemaData){
+    var err = new Error(`Can not render out of ${typeof schemaData}, need an ISchema!`);
+    throw err;
+  }
+  // create an returnable ReadStream that is in object mode, because we want to put File objects on it
+  const outStream = new Readable({ objectMode: true });
+  outStream._read = () => {}; // implemenmts a read() function 
+
+  const $templates = await loadTemplates(path.join(__dirname, "../../../../assets/class.templates/"));
+
+  // publish package.json
+  outStream.push(new File({
+    cwd: '/',
+    base: '/',
+    path: '/classDiagram.puml',
+    contents: Buffer.from(mustache.render($templates['$index'], schemaData, $templates),"utf-8")
+  }));
+
+  // end the stream
+  outStream.push(null);
+  return outStream;
+}
+
+
+/**
+ * load mustache templates asynchronously
+ * @param  {String} mustachesPath The path to all mustaches
+ * @private
+ */
+export async function loadTemplates(mustachesPath:string):Promise<{[templateName:string]: string}> {
+  var templates: {[templateName:string]: string} = {
+  };
+  const fileNames = fs.readdirSync(mustachesPath, {encoding: "utf8"});
+  for (const filename of fileNames) {
+    templates[path.basename(filename, '.mustache')] = fs.readFileSync(path.join(mustachesPath, filename), "utf8");
+  }
+  return templates;
+};
+
+
+ // compare property names for sorting
+function propertyCompare (a:{name:string}, b:{name:string}) {
+  if (a.name === "id") 
+    return -4
+  if (a.name === "name") 
+    return -3
+  if (a.name === "uri") 
+    return -2
+  if (b.name === "id") 
+    return 4
+  if (b.name === "name") 
+    return 3
+  if (b.name === "uri") 
+    return 2
+  if (a.name < b.name)
+    return -1;
+  if (a.name > b.name)
+    return 1;
+  return 0;
+}
+
+const SERVICE_REGEX = /((?:rsi|viwi).service.([a-zA-Z][a-zA-Z0-9]+))/;
+const REFERENCE_NAME_REGEX = /[a-zA-Z0-9]+\.((?:.+Object$)|(?:.+Type$))/;
+
+/**
+ * parses schema(s) into ISchema compliant objects
+ * @param  {string|Array<string>} schemapaths path(s) to viwi scheme file
+ * @return {object} schema representation
+ */
+export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema> {
+
+  schemapaths = Array.isArray(schemapaths) ? schemapaths : [schemapaths];
+
+  var ret:ISchema = {
+    namespaces: []
+  };
+
+  for (const schemaPath of schemapaths) {
+
+    try {
+      // check file availablity
+      fs.accessSync(schemaPath, fs.constants.R_OK);
+    } catch (error) {
+      throw new Error(`Can not parse schema from ${schemaPath}!`);
+    }
+
+    // start parsing if no exception was thrown
+    const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8')); // might fail an throw an error which is caught by async
+ 
+    const namespaceName = (null !== schema.name.match(SERVICE_REGEX)) ? schema.name.match(SERVICE_REGEX)[2] : undefined;
+
+    if (!namespaceName) throw new Error("no service name found for in " + schema.name);
+
+    let namespace:ISchemaNameSpace = {
+      name: namespaceName,
+      enums: [],
+      types: [],
+      references: []
+    };
+ 
+    // first, take care of all resource definitions 
+    for (const resourceName in schema.resources) {
+      if (schema.resources.hasOwnProperty(resourceName)) {
+       const resource = schema.resources[resourceName];
+       const cla$$:{name:string, properties: any[]} = {
+        name: resourceName + "Object",
+        properties: []
+      }
+      // iterate over all attributes
+      if(!resource.objectModel) throw new Error(`objectModel missing in resource definition of ${namespaceName}.${resourceName}`)
+      for (const attributeName in resource.objectModel.attributes) {
+        if (resource.objectModel.attributes.hasOwnProperty(attributeName)) {
+          const modelAttribute = resource.objectModel.attributes[attributeName];
+          
+          let attribute: {name:string, type?:string, format?:string} = {
+            "name": attributeName,
+          };
+
+          // reference type or object
+          if(modelAttribute.type === 'object' && modelAttribute.hasOwnProperty("oneOf")){
+            let attrTypes: string[] = []
+            for (const item of modelAttribute.oneOf) {
+              const $ref = item['#ref'];
+              if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`)
+              let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+              // we also need to keep track of the reference
+              const attrRef:ISchemaReference = {
+                to: $ref,
+                from: `${namespace.name}.${cla$$.name}`,
+                property: attributeName
+              }
+              attrTypes.push(attributeReference);
+              // add to the list of references
+              namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+            }
+            attribute.type = attrTypes.join(" | ");
+          }
+          else if(modelAttribute.enum) { // it is an enumeration
+            attribute.type = modelAttribute.type;
+
+            // add the enum to the list of available enums
+            const enumeration = {
+              name : attributeName,
+              belongsTo : cla$$.name,
+              properties : modelAttribute.enum
+            }
+            namespace.enums.push(enumeration);
+
+            // an enum also needs to be in the references list
+            const attrRef:ISchemaReference = {
+              to: `${enumeration.belongsTo} ${attributeName}`,
+              from: `${namespace.name}.${cla$$.name}`,
+              property: attributeName
+            }
+            namespace.references.push(attrRef);
+          }
+          // we found an array of "something"
+          else if(modelAttribute.type === "array" && modelAttribute.items) {
+            let attrTypes:string[] = [];
+            if (modelAttribute.items.type !== "object") {
+              // it is a primitive array
+              attrTypes = [modelAttribute.items.type];
+              attribute.format = modelAttribute.format;
+            }
+            else {
+              // @@TODO: may there be arrays of enums? ==> references will fail and enums will not be created
+              attrTypes = modelAttribute.items.oneOf.map(item => {
+                const $ref = item['#ref'];
+                if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`);
+                let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+                // we also need to keep track of the reference
+                const attrRef:ISchemaReference = {
+                  to: $ref,
+                  from: `${namespace.name}.${cla$$.name}`,
+                  property: attributeName
+                }
+                attrTypes.push(attributeReference);
+                // add to the list of references
+                namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+                return $ref.match(REFERENCE_NAME_REGEX)[1]
+              });
+            }
+            attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
+          }
+          //we found a primitive type ;)
+          else {
+            attribute.type = modelAttribute.type;
+            attribute.format = modelAttribute.format;
+          }
+
+          cla$$.properties.push(attribute);
+        }
+      }
+
+      // before we add the class, oder properties so we have id, name, uri on top for uniformity
+      cla$$.properties = cla$$.properties.sort(propertyCompare);
+
+      namespace.classes ? namespace.classes.push(cla$$) : namespace.classes = [cla$$];
+    }
+  }
+
+    // second take care of all type definitions
+    // @@TODO: to be implemented
+    ret.namespaces.push(namespace);
+  };
+  return ret;
+}

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="400"
+   height="400"
+   viewBox="0 0 400 400.00001"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="rsiCli.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.61"
+     inkscape:cx="109.31677"
+     inkscape:cy="200"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1440"
+     inkscape:window-height="810"
+     inkscape:window-x="0"
+     inkscape:window-y="1"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3336" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="shield"
+     sodipodi:insensitive="true"
+     style="display:inline">
+    <g
+       id="g3449">
+      <path
+         id="rect3438"
+         d="M 200.40039,20.572266 29.296875,80.285156 54.445312,307.86133 200.40039,391.6582 l 0,-371.085934 z"
+         style="fill:#4d4d4d"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         style="fill:#1a1a1a"
+         d="m 200.40282,20.5727 171.10352,59.71289 -25.14844,227.57617 -145.95508,83.79687 0,-371.08593 z"
+         id="path3447" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="text"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ffffff"
+       id="rect3458"
+       width="110"
+       height="36"
+       x="196"
+       y="260" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3460"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(1,0,0,0.73557134,882,199.84683)"><flowRegion
+         id="flowRegion3462"><rect
+           id="rect3464"
+           width="380"
+           height="240"
+           x="-660"
+           y="80"
+           style="fill:#000000" /></flowRegion><flowPara
+         id="flowPara3466"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:3px;fill:#1a1a1a;fill-opacity:1">RSI</flowPara></flowRoot>    <path
+       style="fill:#ffffff"
+       d="m 99.363281,91.208984 -26.662109,27.078126 79.917968,78.6875 -78.113281,80.48437 27.267581,26.4668 92.99609,-95.8164 11.47852,-11.65821 -0.084,-0.084 0.0801,-0.082 L 194.7754,185.15626 99.363291,91.208994 Z"
+       id="rect3468"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

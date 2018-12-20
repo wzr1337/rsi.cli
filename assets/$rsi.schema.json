@@ -1,0 +1,176 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "RSI Validation Schema",
+  "version": "2.0.0",
+  "$ref": "#/definitions/serviceDefinition",
+  "definitions": {
+    "serviceDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(viwi|rsi)\\.service\\.[a-zA-Z0-9]+$"
+        },
+        "resources": {
+          "$ref": "#/definitions/resourcesDefinition"
+        },
+        "types": {
+          "$ref": "#/definitions/typesDefinition"
+        },
+        "description": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": ["description", "name", "$schema"],
+      "additionalProperties": false
+    },
+    "resourcesDefinition": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "objectModel": {
+          "$ref": "#/definitions/objectModelDefinition"
+        }
+      },
+      "required": ["description"],
+      "additionalProperties": true
+    },
+    "typesDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": ["description"],
+      "additionalProperties": true
+    },
+    "objectModelDefinition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "minLength": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": ["string", "number", "integer", "boolean", "array", "object"]
+            },
+            "format": {
+              "type": "string",
+              "pattern": "uuid"
+            }
+          },
+          "required": ["description", "type", "format"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "minLength": 2
+            },
+            "type": {
+              "type": "string",
+              "pattern": "string"
+            },
+            "format": {
+              "type": "string",
+              "pattern": "uri"
+            }
+          },
+          "required": ["description", "type", "format"]
+        }
+      },
+      "patternProperties": {
+        "^[a-zA-Z0-9]+$": {
+          "$ref": "#/definitions/objectPropertyDefinition"
+        }
+      },
+      "additionalProperties": false,
+      "required" : ["id", "name", "uri"]
+    },
+    "objectModelReference": {
+      "type": "object",
+      "properties": {
+        "#ref": {
+          "type": "string",
+          "pattern": "^([a-zA-Z]+\\.[a-zA-Z]+\\.[a-zA-Z]+Object|[a-zA-Z]+\\.[a-zA-Z]+Type)$"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["#ref"]
+    },
+    "objectPropertyDefinition": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 2
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "integer", "boolean", "array", "object"]
+        },
+        "format": {
+          "type": "string"
+        },
+        "enum" : {
+          "type": "array"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "resolution": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "oneOf": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/objectModelReference"
+          }
+        },
+        "items": {
+          "type": "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "enum": ["string", "number", "integer", "boolean", "array", "object"]
+            },
+        "oneOf": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "$ref": "#/definitions/objectModelReference"
+          }
+        }
+          },
+          "required" : ["type"]
+        }
+      },
+      "additionalProperties": false,
+      "required": ["description", "type"]
+    }
+  }
+}

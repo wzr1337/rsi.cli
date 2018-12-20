@@ -1,0 +1,5 @@
+{
+  "name": "rsi.service.{{name}}",
+  "$schema": "rsi#v2",
+  "description": "{{description}}"
+}
