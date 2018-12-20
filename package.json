@@ -23,7 +23,7 @@
     "cli"
   ],
   "author": "Dr. Patrick Bartsch",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "@types/handlebars": "^4.0.39",
     "ajv": "^6.5.4",
