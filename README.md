@@ -2,7 +2,7 @@
 
 <center>
 
-![RSI.cli](./assets/logo.png)
+![RSI.cli](https://github.com/wzr1337/rsi.cli/blob/master/assets/logo.png)
 
 </center>
 
@@ -13,7 +13,7 @@ The swiss army knife for RSI related tasks.
 To install the cli globally run the following command:
 
 ```bash
-$ npm i -g https://github.com/wzr1337/rsi.cli
+$ npm i -g rsi.cli
 ```
 
 *this assumes you used git to access gitlab before*
