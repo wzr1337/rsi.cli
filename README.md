@@ -8,6 +8,10 @@
 
 The swiss army knife for RSI related tasks.
 
+This project supports the RESTful Service Interface as published under [https://www.w3.org/Submission/2016/01/](https://www.w3.org/Submission/2016/01/). 
+
+The framework proposes a slightly out-of-date JSON schema for service definitions, so the this module uses the sevice schema published under https://github.com/wzr1337/rsi.schema
+
 ## Installation
 
 To install the cli globally run the following command:
