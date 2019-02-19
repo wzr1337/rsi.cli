@@ -16,7 +16,6 @@ To install the cli globally run the following command:
 $ npm i -g rsi.cli
 ```
 
-*this assumes you used git to access gitlab before*
 
 ## Usage
 
