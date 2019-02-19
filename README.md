@@ -1,5 +1,7 @@
 # RSI (RESTful Service Interface) command line interface
 
+[![Build Status](https://travis-ci.com/wzr1337/rsi.cli.svg?branch=master)](https://travis-ci.com/wzr1337/rsi.cli)
+
 <center>
 
 ![RSI.cli](https://raw.githubusercontent.com/wzr1337/rsi.cli/master/assets/logo.png)
