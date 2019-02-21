@@ -52,12 +52,16 @@ switch (mainOptions.command) {
         break;
         case 'render': 
           const serviceRenderOpts = commandLineArgs([
-            { name: 'schema', alias: 's', type: String },
+            { name: 'sourceFolder', alias: 's', type: String },
             { name: 'output', alias: 'o', type: String }
           ], { argv: serviceArgv });
 
-          if(serviceRenderOpts.schema && serviceRenderOpts.output) {
-            service.parseSchemas([serviceRenderOpts.schema]).then(payload => {
+          if(serviceRenderOpts.sourceFolder && serviceRenderOpts.output) {
+            const paths = {
+              schema : path.join(serviceRenderOpts.sourceFolder, "./src/schema.json"),
+            }
+
+            service.parseSchemas([paths.schema]).then(payload => {
               service.render(payload).then(data => {
                 data.pipe(vfs.dest(serviceRenderOpts.output));
                 Logger.success("Rendered sucessfully")
@@ -65,7 +69,7 @@ switch (mainOptions.command) {
             })
           } else {
             Logger.error("One or mor parameter missing");
-            console.log("Usage: $ rsi service render --schema <pathToSchema> --output <pathToOutputFilder>");
+            console.log("Usage:\n$ rsi service render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
         case 'markdown': 
@@ -90,7 +94,7 @@ switch (mainOptions.command) {
               .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
           } else {
             Logger.error("One or more parameter missing");
-            console.log("Usage: $ rsi service document --sourceFolder <pathToSchemaFolder> --output <pathToOutputFolder>");
+            console.log("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
         default: 
