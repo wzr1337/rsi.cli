@@ -50,6 +50,9 @@ switch (mainOptions.command) {
             console.log("Usage: $ rsi service validate --schema <pathToSchema>");
           }
         break;
+        case 'release': 
+          Logger.error("`release` command currently not supported");
+        break;
         case 'render': 
           const serviceRenderOpts = commandLineArgs([
             { name: 'sourceFolder', alias: 's', type: String },
