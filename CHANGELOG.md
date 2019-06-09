@@ -1,3 +1,13 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/wzr1337/rsi.cli/compare/0.2.0...0.2.1) (2019-06-09)
+
+
+### Features
+
+* **service.render:** you can now watch your source files to re-render the puml using the --watch flag ([1d23f2b](https://github.com/wzr1337/rsi.cli/commit/1d23f2b))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/wzr1337/rsi.cli/compare/0.1.3...0.2.0) (2019-02-21)
 
