@@ -3,6 +3,7 @@ import mustache from "mustache";
 import * as fs from "fs";
 import { Readable } from "stream";
 import File from "vinyl";
+import { Logger } from "../../../utils/Logger";
 
 export interface ISchemaClass {
   name: string,
@@ -293,31 +294,36 @@ export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema>
           }
           // we found an array of "something"
           else if(modelAttribute.type === "array" && modelAttribute.items) {
-            let attrTypes:string[] = [];
-            if (modelAttribute.items.type !== "object") {
-              // it is a primitive array
-              attrTypes = [modelAttribute.items.type];
-              attribute.format = modelAttribute.format;
-            }
-            else {
+            if(modelAttribute.items && modelAttribute.items.type === "object") {
+              if(!modelAttribute.items.oneOf) Logger.error(`missing oneOf definition for array ${namespace.name}.${cla$$.name}`);
+              let attrTypes:string[] = [];
               // @@TODO: may there be arrays of enums? ==> references will fail and enums will not be created
               attrTypes = modelAttribute.items.oneOf.map(item => {
-                const $ref = item['#ref'];
-                if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`);
-                let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
-                // we also need to keep track of the reference
-                const attrRef:ISchemaReference = {
-                  to: $ref,
-                  from: `${namespace.name}.${cla$$.name}`,
-                  property: attributeName
+                if (!item['#ref']) {
+                  // this is an array of primitives
+                  return item.type;
                 }
-                attrTypes.push(attributeReference);
-                // add to the list of references
-                namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
-                return $ref.match(REFERENCE_NAME_REGEX)[1]
+                else {
+                  const $ref = item['#ref'];
+                  if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`);
+                  let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+                  // we also need to keep track of the reference
+                  const attrRef:ISchemaReference = {
+                    to: $ref,
+                    from: `${namespace.name}.${cla$$.name}`,
+                    property: attributeName
+                  }
+                  attrTypes.push(attributeReference);
+                  // add to the list of references
+                  namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+                  return $ref.match(REFERENCE_NAME_REGEX)[1]
+                }
               });
+              attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
             }
-            attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
+            else {
+              Logger.error(`items must be object: ${namespace.name}.${cla$$.name}`);
+            }
           }
           //we found a primitive type ;)
           else {
