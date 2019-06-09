@@ -1,5 +1,10 @@
-<a name="0.2.1"></a>
-## [0.2.1](https://github.com/wzr1337/rsi.cli/compare/0.2.0...0.2.1) (2019-06-09)
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/wzr1337/rsi.cli/compare/0.2.0...0.2.2) (2019-06-09)
+
+
+### Bug Fixes
+
+* **service.render:** properly rendering references for properties of type array ([392d7f2](https://github.com/wzr1337/rsi.cli/commit/392d7f2))
 
 
 ### Features
