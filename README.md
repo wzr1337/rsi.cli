@@ -112,6 +112,7 @@ Usage: `rsi <commands...> [options...]`
   | --------------- | ----- | ------------------------------------------------------- |
   | --sourceFolder  | -s    | the root folder of the project definition repository    |
   | --sourceFolder  | -o    | the output folder for the generated diagram             |
+  | --watch         | -w    | watch the definition for changes                        |
   
 #### <a name="service.markdown"></a>markdown
 

@@ -6,6 +6,8 @@ import { printHelp, getVersion, service} from "./";
 import * as vfs from "vinyl-fs";
 import * as path from "path";
 import { existsSync } from "fs";
+import * as watch from "watch";
+import { Writable } from "stream";
 
 
 /* first - parse the main command */
@@ -56,7 +58,8 @@ switch (mainOptions.command) {
         case 'render': 
           const serviceRenderOpts = commandLineArgs([
             { name: 'sourceFolder', alias: 's', type: String },
-            { name: 'output', alias: 'o', type: String }
+            { name: 'output', alias: 'o', type: String },
+            { name: 'watch', alias: 'w', type: Boolean }
           ], { argv: serviceArgv });
 
           if(serviceRenderOpts.sourceFolder && serviceRenderOpts.output) {
@@ -64,15 +67,36 @@ switch (mainOptions.command) {
               schema : path.join(serviceRenderOpts.sourceFolder, "./src/schema.json"),
             }
 
+            // render once 
             service.parseSchemas([paths.schema]).then(payload => {
               service.render(payload).then(data => {
-                data.pipe(vfs.dest(serviceRenderOpts.output));
-                Logger.success("Rendered sucessfully")
-              }).catch(err => Logger.error("Rednering failed:", JSON.stringify(err, undefined, 2)));
-            })
+                data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => {
+                  Logger.success(`Rendered plantuml to ${path.join(serviceRenderOpts.output, data.basename)}.`);
+                })
+              }).catch(err => Logger.error("Rendering failed:", JSON.stringify(err, undefined, 2)));
+            });
+
+            // check if we are watching
+            if (serviceRenderOpts.watch) {
+              watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./src/"), (monitor) => {
+                monitor.files[paths.schema]
+                Logger.info(`Watching ${paths.schema}...`);
+                monitor.on("changed", () => {
+                  // Handle file changes
+                  Logger.info(`Change detected in ${paths.schema}.`);
+                  service.parseSchemas([paths.schema]).then(payload => {
+                    service.render(payload).then(data => {
+                      data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => {
+                        Logger.success(`Rendered plantuml to ${path.join(serviceRenderOpts.output, data.basename)}.`);
+                      })
+                    }).catch(err => Logger.error("Rendering failed:", JSON.stringify(err, undefined, 2)));
+                  });      
+                });
+              })
+            }
           } else {
             Logger.error("One or mor parameter missing");
-            console.log("Usage:\n$ rsi service render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
+            Logger.info("Usage:\n$ rsi service render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
         case 'markdown': 
@@ -97,7 +121,7 @@ switch (mainOptions.command) {
               .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
           } else {
             Logger.error("One or more parameter missing");
-            console.log("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
+            Logger.info("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
         default: 

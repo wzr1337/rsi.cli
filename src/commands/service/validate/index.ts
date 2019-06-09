@@ -6,19 +6,13 @@ import { Logger } from "../../../utils/Logger";
 
 
 function readFile(filename:string){
-  var json = null;
   var file = path.resolve(process.cwd(), filename);
   try {
-      try {
-          json = JSON.parse(fs.readFileSync(file, 'utf-8'));
-      } catch(JSONerr) {
-          json = require(file);
-      }
+    return JSON.parse(fs.readFileSync(file, 'utf-8'));
   } catch(err) {
       Logger.error(err.message);
       process.exit(2);
   }
-  return json;
 }
 
 /* @@ TODO: migrtae to Joi for beeter reporting
@@ -52,7 +46,7 @@ export async function validate(candidate?:string):Promise<any> {
   // To use Ajv with draft-06 schemas you need to explicitly add the meta-schema to the validator instance
   ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 
-  let validate = ajv.compile(readFile(path.join(__dirname, '../../../assets/$rsi.schema.json')));
+  let validate = ajv.compile(readFile(path.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
   
   let result = await validate(readFile(candidate));
  
