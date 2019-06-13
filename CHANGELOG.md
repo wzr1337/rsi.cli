@@ -1,3 +1,13 @@
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/wzr1337/rsi.cli/compare/0.2.2...0.2.3) (2019-06-13)
+
+
+### Features
+
+* **service.render:** rendering types with properties ([4ea8b94](https://github.com/wzr1337/rsi.cli/commit/4ea8b94))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/wzr1337/rsi.cli/compare/0.2.0...0.2.2) (2019-06-09)
 

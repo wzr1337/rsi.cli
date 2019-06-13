@@ -1,7 +1,7 @@
 {
   "name": "rsi.cli",
   "longname": "RSI (RESTful Service Interface) command line interface",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The swiss army knife for RSI related tasks.",
   "repository": {
     "type": "git",
