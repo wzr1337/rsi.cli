@@ -38,6 +38,7 @@
     "joi": "^13.6.0",
     "mustache": "^3.0.0",
     "node-plantuml": "^0.8.1",
+    "rsi.schema": "git+https://github.com/wzr1337/rsi.schema.git",
     "through2": "^2.0.3",
     "underscore": "^1.9.1",
     "vinyl": "^2.2.0",

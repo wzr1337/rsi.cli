@@ -235,113 +235,220 @@ export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema>
       types: [],
       references: []
     };
- 
+
+    //@@ TODO: a lot of code duplication going on in the following sections. needs refactoring URGENTLY
+
     // first, take care of all resource definitions 
     for (const resourceName in schema.resources) {
       if (schema.resources.hasOwnProperty(resourceName)) {
-       const resource = schema.resources[resourceName];
-       const cla$$:{name:string, properties: any[]} = {
-        name: resourceName + "Object",
-        properties: []
-      }
-      // iterate over all attributes
-      if(!resource.objectModel) throw new Error(`objectModel missing in resource definition of ${namespaceName}.${resourceName}`)
-      for (const attributeName in resource.objectModel.attributes) {
-        if (resource.objectModel.attributes.hasOwnProperty(attributeName)) {
-          const modelAttribute = resource.objectModel.attributes[attributeName];
-          
-          let attribute: {name:string, type?:string, format?:string} = {
-            "name": attributeName,
-          };
+        const resource = schema.resources[resourceName];
+        const cla$$:{name:string, properties: any[]} = {
+          name: resourceName + "Object",
+          properties: []
+        }
+        // iterate over all attributes
+        if(!resource.objectModel) throw new Error(`objectModel missing in resource definition of ${namespaceName}.${resourceName}`)
+        for (const attributeName in resource.objectModel.attributes) {
+          if (resource.objectModel.attributes.hasOwnProperty(attributeName)) {
+            const modelAttribute = resource.objectModel.attributes[attributeName];
+            
+            let attribute: {name:string, type?:string, format?:string} = {
+              "name": attributeName,
+            };
 
-          // reference type or object
-          if(modelAttribute.type === 'object' && modelAttribute.hasOwnProperty("oneOf")){
-            let attrTypes: string[] = []
-            for (const item of modelAttribute.oneOf) {
-              const $ref = item['#ref'];
-              if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`)
-              let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
-              // we also need to keep track of the reference
+            // reference type or object
+            if(modelAttribute.type === 'object' && modelAttribute.hasOwnProperty("oneOf")){
+              let attrTypes: string[] = []
+              for (const item of modelAttribute.oneOf) {
+                const $ref = item['#ref'];
+                if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`)
+                let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+                // we also need to keep track of the reference
+                const attrRef:ISchemaReference = {
+                  to: $ref,
+                  from: `${namespace.name}.${cla$$.name}`,
+                  property: attributeName
+                }
+                attrTypes.push(attributeReference);
+                // add to the list of references
+                namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+              }
+              attribute.type = attrTypes.join(" | ");
+            }
+            else if(modelAttribute.enum) { // it is an enumeration
+              attribute.type = modelAttribute.type;
+
+              // add the enum to the list of available enums
+              const enumeration = {
+                name : attributeName,
+                belongsTo : cla$$.name,
+                properties : modelAttribute.enum
+              }
+              namespace.enums.push(enumeration);
+
+              // an enum also needs to be in the references list
               const attrRef:ISchemaReference = {
-                to: $ref,
+                to: `${enumeration.belongsTo} ${attributeName}`,
                 from: `${namespace.name}.${cla$$.name}`,
                 property: attributeName
               }
-              attrTypes.push(attributeReference);
-              // add to the list of references
-              namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+              namespace.references.push(attrRef);
             }
-            attribute.type = attrTypes.join(" | ");
-          }
-          else if(modelAttribute.enum) { // it is an enumeration
-            attribute.type = modelAttribute.type;
-
-            // add the enum to the list of available enums
-            const enumeration = {
-              name : attributeName,
-              belongsTo : cla$$.name,
-              properties : modelAttribute.enum
-            }
-            namespace.enums.push(enumeration);
-
-            // an enum also needs to be in the references list
-            const attrRef:ISchemaReference = {
-              to: `${enumeration.belongsTo} ${attributeName}`,
-              from: `${namespace.name}.${cla$$.name}`,
-              property: attributeName
-            }
-            namespace.references.push(attrRef);
-          }
-          // we found an array of "something"
-          else if(modelAttribute.type === "array" && modelAttribute.items) {
-            if(modelAttribute.items && modelAttribute.items.type === "object") {
-              if(!modelAttribute.items.oneOf) Logger.error(`missing oneOf definition for array ${namespace.name}.${cla$$.name}`);
-              let attrTypes:string[] = [];
-              // @@TODO: may there be arrays of enums? ==> references will fail and enums will not be created
-              attrTypes = modelAttribute.items.oneOf.map(item => {
-                if (!item['#ref']) {
-                  // this is an array of primitives
-                  return item.type;
-                }
-                else {
-                  const $ref = item['#ref'];
-                  if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`);
-                  let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
-                  // we also need to keep track of the reference
-                  const attrRef:ISchemaReference = {
-                    to: $ref,
-                    from: `${namespace.name}.${cla$$.name}`,
-                    property: attributeName
+            // we found an array of "something"
+            else if(modelAttribute.type === "array" && modelAttribute.items) {
+              if(modelAttribute.items && modelAttribute.items.type === "object") {
+                if(!modelAttribute.items.oneOf) Logger.error(`missing oneOf definition for array ${namespace.name}.${cla$$.name}`);
+                let attrTypes:string[] = [];
+                // @@TODO: may there be arrays of enums? ==> references will fail and enums will not be created
+                attrTypes = modelAttribute.items.oneOf.map(item => {
+                  if (!item['#ref']) {
+                    // this is an array of primitives
+                    return item.type;
                   }
-                  attrTypes.push(attributeReference);
-                  // add to the list of references
-                  namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
-                  return $ref.match(REFERENCE_NAME_REGEX)[1]
-                }
-              });
-              attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
+                  else {
+                    const $ref = item['#ref'];
+                    if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`);
+                    let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+                    // we also need to keep track of the reference
+                    const attrRef:ISchemaReference = {
+                      to: $ref,
+                      from: `${namespace.name}.${cla$$.name}`,
+                      property: attributeName
+                    }
+                    attrTypes.push(attributeReference);
+                    // add to the list of references
+                    namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+                    return $ref.match(REFERENCE_NAME_REGEX)[1]
+                  }
+                });
+                attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
+              }
+              else {
+                Logger.error(`items must be object: ${namespace.name}.${cla$$.name}`);
+              }
             }
+            //we found a primitive type ;)
             else {
-              Logger.error(`items must be object: ${namespace.name}.${cla$$.name}`);
+              attribute.type = modelAttribute.type;
+              attribute.format = modelAttribute.format;
             }
-          }
-          //we found a primitive type ;)
-          else {
-            attribute.type = modelAttribute.type;
-            attribute.format = modelAttribute.format;
-          }
 
-          cla$$.properties.push(attribute);
+            cla$$.properties.push(attribute);
+          }
         }
-      }
 
       // before we add the class, oder properties so we have id, name, uri on top for uniformity
       cla$$.properties = cla$$.properties.sort(propertyCompare);
 
       namespace.classes ? namespace.classes.push(cla$$) : namespace.classes = [cla$$];
+      }
     }
-  }
 
+    // second, take care of all type definitions
+    for (const typeName in schema.types) {
+      if (schema.types.hasOwnProperty(typeName)) {
+        const type = schema.types[typeName];
+        const typeDefinition:{name:string, properties: any[]} = {
+          name: typeName + "Type",
+          properties: []
+        }
+
+        // iterate over all attributes
+        if(!type.attributes) throw new Error(`attributes missing in type definition of ${namespaceName}.${typeName}`)
+        for (const attributeName in type.attributes) {
+          if (type.attributes.hasOwnProperty(attributeName)) {
+            const modelAttribute = type.attributes[attributeName];
+            
+            let attribute: {name:string, type?:string, format?:string} = {
+              "name": attributeName,
+            };
+
+            // reference type or object
+            if(modelAttribute.type === 'object' && modelAttribute.hasOwnProperty("oneOf")){
+              let attrTypes: string[] = []
+              for (const item of modelAttribute.oneOf) {
+                const $ref = item['#ref'];
+                if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`)
+                let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+                // we also need to keep track of the reference
+                const attrRef:ISchemaReference = {
+                  to: $ref,
+                  from: `${namespace.name}.${typeDefinition.name}`,
+                  property: attributeName
+                }
+                attrTypes.push(attributeReference);
+                // add to the list of references
+                namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+              }
+              attribute.type = attrTypes.join(" | ");
+            }
+            else if(modelAttribute.enum) { // it is an enumeration
+              attribute.type = modelAttribute.type;
+
+              // add the enum to the list of available enums
+              const enumeration = {
+                name : attributeName,
+                belongsTo : typeDefinition.name,
+                properties : modelAttribute.enum
+              }
+              namespace.enums.push(enumeration);
+
+              // an enum also needs to be in the references list
+              const attrRef:ISchemaReference = {
+                to: `${enumeration.belongsTo} ${attributeName}`,
+                from: `${namespace.name}.${typeDefinition.name}`,
+                property: attributeName
+              }
+              namespace.references.push(attrRef);
+            }
+            // we found an array of "something"
+            else if(modelAttribute.type === "array" && modelAttribute.items) {
+              if(modelAttribute.items && modelAttribute.items.type === "object") {
+                if(!modelAttribute.items.oneOf) Logger.error(`missing oneOf definition for array ${namespace.name}.${typeDefinition.name}`);
+                let attrTypes:string[] = [];
+                // @@TODO: may there be arrays of enums? ==> references will fail and enums will not be created
+                attrTypes = modelAttribute.items.oneOf.map(item => {
+                  if (!item['#ref']) {
+                    // this is an array of primitives
+                    return item.type;
+                  }
+                  else {
+                    const $ref = item['#ref'];
+                    if(null === $ref.match(REFERENCE_NAME_REGEX)) throw new Error(`Reference ${$ref} is broken`);
+                    let attributeReference = $ref.match(REFERENCE_NAME_REGEX)[1]; 
+                    // we also need to keep track of the reference
+                    const attrRef:ISchemaReference = {
+                      to: $ref,
+                      from: `${namespace.name}.${typeDefinition.name}`,
+                      property: attributeName
+                    }
+                    attrTypes.push(attributeReference);
+                    // add to the list of references
+                    namespace.references ? namespace.references.push(attrRef) : namespace.references = [attrRef];
+                    return $ref.match(REFERENCE_NAME_REGEX)[1]
+                  }
+                });
+                attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
+              }
+              else {
+                Logger.error(`items must be object: ${namespace.name}.${typeDefinition.name}`);
+              }
+            }
+            //we found a primitive type ;)
+            else {
+              attribute.type = modelAttribute.type;
+              attribute.format = modelAttribute.format;
+            }
+
+            typeDefinition.properties.push(attribute);
+          }
+        }
+        // before we add the type, order properties so we have id, name, uri on top for uniformity
+        typeDefinition.properties = typeDefinition.properties.sort(propertyCompare);
+        
+        namespace.types ? namespace.types.push(typeDefinition) : namespace.types = [typeDefinition];
+      }
+    }
     // second take care of all type definitions
     // @@TODO: to be implemented
     ret.namespaces.push(namespace);
