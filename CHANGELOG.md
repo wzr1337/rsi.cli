@@ -1,3 +1,13 @@
+<a name="0.2.4"></a>
+## [0.2.4](https://github.com/wzr1337/rsi.cli/compare/0.2.3...0.2.4) (2019-06-14)
+
+
+### Bug Fixes
+
+* **service.init:** missing parameters in init lead to help print out ([a358e1f](https://github.com/wzr1337/rsi.cli/commit/a358e1f))
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/wzr1337/rsi.cli/compare/0.2.2...0.2.3) (2019-06-13)
 
@@ -9,12 +19,17 @@
 
 
 <a name="0.2.2"></a>
-## [0.2.2](https://github.com/wzr1337/rsi.cli/compare/0.2.0...0.2.2) (2019-06-09)
+## [0.2.2](https://github.com/wzr1337/rsi.cli/compare/0.2.1...0.2.2) (2019-06-09)
 
 
 ### Bug Fixes
 
 * **service.render:** properly rendering references for properties of type array ([392d7f2](https://github.com/wzr1337/rsi.cli/commit/392d7f2))
+
+
+
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/wzr1337/rsi.cli/compare/0.2.0...0.2.1) (2019-06-09)
 
 
 ### Features
