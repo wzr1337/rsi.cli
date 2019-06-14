@@ -31,7 +31,7 @@ switch (mainOptions.command) {
             { name: 'version', alias: 'v', type: String },
           ], { argv: serviceArgv });
 
-          if(serviceInitOpts.author, serviceInitOpts.email, serviceInitOpts.name, serviceInitOpts.output) {
+          if(serviceInitOpts.author && serviceInitOpts.email && serviceInitOpts.name && serviceInitOpts.output) {
             service.init(serviceInitOpts as service.serviceMeta).pipe(vfs.dest(serviceInitOpts.output));
           } else {
             Logger.error("One or mor parameter missing");
