@@ -25,7 +25,7 @@ function readFile(filename) {
         process.exit(2);
     }
 }
-/* @@ TODO: migrtae to Joi for beeter reporting
+/* @@ TODO: migrate to Joi for beeter reporting
 
 
 export async function validate(obj:any) {
