@@ -1,0 +1,19 @@
+{
+  "name": "rsi.service.foo",
+  "version": "0.0.1",
+  "description": "some service",
+  "files": ["src/schema.json"],
+  "author": "pbartsch <pbartsch@jaguarlandrover.com>",
+  "contributors": [
+  ],
+  "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "conventional-changelog": "^3.0.5",
+    "conventional-changelog-cli": "^2.0.11"
+  }
+}

@@ -8,6 +8,7 @@ import * as path from "path";
 import { existsSync } from "fs";
 import * as watch from "watch";
 import { Writable } from "stream";
+import * as inquirer  from "inquirer";
 
 
 /* first - parse the main command */
@@ -31,12 +32,31 @@ switch (mainOptions.command) {
             { name: 'version', alias: 'v', type: String },
           ], { argv: serviceArgv });
 
-          if(serviceInitOpts.author && serviceInitOpts.email && serviceInitOpts.name && serviceInitOpts.output) {
-            service.init(serviceInitOpts as service.serviceMeta).pipe(vfs.dest(serviceInitOpts.output));
-          } else {
-            Logger.error("One or mor parameter missing");
-            console.log("Usage: $ rsi service init --name <servicename> --author \"<username>\" --email <email> --output <outputfolder>");
-          }
+          const questions = [
+            { type: 'input', name: 'name', message: 'What is the service name?', default: serviceInitOpts.name, validate: (inp:string) => {
+              if (!inp) return false;
+              const isEmail = inp.match(/^\w+$/);
+              return (isEmail !== null) || "not a valid name, only characters and numbers allowed";
+            }},
+            { type: 'input', name: 'version', message: 'What is the service version?', default: serviceInitOpts.version || "0.0.1"},
+            { type: 'input', name: 'description', message: 'Give a short desciption of your service?', default: serviceInitOpts.description || "some service"},
+            { type: 'input', name: 'author', message: 'Who authored the service?', default: serviceInitOpts.author || process.env.LOGNAME},
+            { type: 'input', name: 'email', message: 'What is teh authors email?', default: serviceInitOpts.email, validate: (inp:string) => {
+              if (!inp) return false;
+              const isEmail = inp.match(/^\w+@\w+\.\w+$/);
+              return (isEmail !== null) || "not a valid email address";
+            }},
+            { type: 'input', name: 'output', message: 'output directory', default: serviceInitOpts.output || "./myNewService"}
+          ];
+          
+          if(!(serviceInitOpts.author && serviceInitOpts.email && serviceInitOpts.name && serviceInitOpts.output)) {
+            Logger.info("Shortcut usage: $ rsi service init --name <servicename> --author \"<username>\" --email <email> --output <outputfolder>\n\r\n\r");
+          }   
+
+          inquirer.prompt(questions as inquirer.Questions).then((answers)=> {
+            console.log(answers)
+            service.init(answers as service.serviceMeta).pipe(vfs.dest(answers.output));
+          });
         break;
         case 'validate': 
           const serviceValidateOpts = commandLineArgs([

@@ -3,7 +3,6 @@ import * as Handlebars from "handlebars";
 import * as fs from "fs";
 import File from "vinyl";
 import { Readable } from "stream";
-
 export const SERVICE_NAME_REGEX = /^(?:viwi|rsi)\.service\.([a-zA-Z0-9]+)$/;
 
 export interface serviceMeta {
