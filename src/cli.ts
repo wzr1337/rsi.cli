@@ -60,13 +60,31 @@ switch (mainOptions.command) {
         break;
         case 'validate': 
           const serviceValidateOpts = commandLineArgs([
-            { name: 'sourceFolder', alias: 's', type: String }
+            { name: 'sourceFolder', alias: 's', type: String },
+            { name: 'watch', alias: 'w', type: Boolean }
           ], { argv: serviceArgv });
 
           if(serviceValidateOpts.sourceFolder) {
-            service.validate(serviceValidateOpts.sourceFolder)
+            const paths = {
+              schema : path.join(serviceValidateOpts.sourceFolder, "./src/schema.json"),
+            }
+            service.validate(paths.schema)
               .then(data => Logger.success("Schema valid"))
               .catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+             // check if we are watching
+             if (serviceValidateOpts.watch) {
+              watch.createMonitor(path.join(serviceValidateOpts.sourceFolder, "./"), (monitor) => {
+                monitor.files[paths.schema]
+                Logger.info(`Watching ${serviceValidateOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
+                  // Handle file changes
+                  Logger.info(`Change detected in ${where}.`);
+                  service.validate(paths.schema)
+                  .then(data => Logger.success("Schema valid"))
+                  .catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+                });
+              })
+            }
           } else {
             Logger.error("One or mor parameter missing");
             console.log("Usage: $ rsi service validate --sourceFolder <pathToServiceFolder>");

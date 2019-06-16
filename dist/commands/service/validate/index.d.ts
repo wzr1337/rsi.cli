@@ -1,1 +1,1 @@
-export declare function validate(sourceFolder?: string): Promise<any>;
+export declare function validate(schemaPath?: string): Promise<any>;

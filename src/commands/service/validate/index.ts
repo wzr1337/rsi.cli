@@ -35,8 +35,7 @@ export async function validate(obj:any) {
   return result.value;
 } */
 
-export async function validate(sourceFolder?:string):Promise<any> {
-  sourceFolder =  path.join(sourceFolder, "./src/schema.json");
+export async function validate(schemaPath?:string):Promise<any> {
   let ajv = new Ajv({
     //schemaId: 'id',
     allErrors: true,
@@ -48,7 +47,7 @@ export async function validate(sourceFolder?:string):Promise<any> {
 
   let $validate = ajv.compile(readFile(path.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
   
-  await $validate(readFile(sourceFolder));
+  await $validate(readFile(schemaPath));
  
   if ($validate.errors) throw {validationErrors: $validate.errors};
 }
