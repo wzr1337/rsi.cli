@@ -401,7 +401,7 @@ Types - or nested objects - do not have their own `id` or `uri`. Therefore, they
 
 | name                         | description                                                | type          | format        | unit(s)       | value(s)              |
 |------------------------------|------------------------------------------------------------|---------------|---------------|---------------|-----------------------|
-{{!-- iterate over all attributes of objectModel--}}
+{{!-- iterate over all attributes of a type --}}
 {{#each this.attributes}}
 | {{strech @key 28}} | {{strech this.description 58}} | {{strech this.type 13 }} | {{strech this.format 13}} | {{strech this.unit 13}} | {{getValue this}} |
 {{/each}}

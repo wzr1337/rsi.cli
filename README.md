@@ -57,7 +57,6 @@ Usage: `rsi <commands...> [options...]`
   | [render](#service.render)     | render UML from schema                                          |
   | [markdown](#service.markdown) | render markdown documentation based on the schema               |
   | [validate](#service.validate) | validate a schema                                               |
-  
 
 #### <a name="service.init"></a>init
 
@@ -113,8 +112,8 @@ Usage: `rsi <commands...> [options...]`
   | option          | alias | meaning                                                 |
   | --------------- | ----- | ------------------------------------------------------- |
   | --sourceFolder  | -s    | the root folder of the project definition repository    |
-  | --sourceFolder  | -o    | the output folder for the generated diagram             |
-  | --watch         | -w    | watch the definition for changes                        |
+  | --outputFolder  | -o    | the output folder for the generated diagram             |
+  | --watch         | -w    | watch the source folder for changes                     |
   
 #### <a name="service.markdown"></a>markdown
 
@@ -133,4 +132,24 @@ Usage: `rsi <commands...> [options...]`
   | option          | alias | meaning                                                 |
   | --------------- | ----- | ------------------------------------------------------- |
   | --sourceFolder  | -s    | the root folder of the project definition repository    |
-  | --sourceFolder  | -o    | the output folder for the generated documentation       |
+  | --outputFolder  | -o    | the output folder for the generated documentation       |
+  | --watch         | -w    | watch the source folder for changes                     |
+
+#### <a name="service.vlaidate"></a>validate
+
+  Usage:
+  
+  `$ rsi service markdown --sourceFolder <pathToServiceFolder>`
+
+  or
+
+  `$ rsi service markdown -s <pathToServiceFolder>`
+  
+  Validates schema.json file contained in `<pathToServiceFolder>`.
+
+**options**
+
+  | option          | alias | meaning                                                 |
+  | --------------- | ----- | ------------------------------------------------------- |
+  | --sourceFolder  | -s    | the root folder of the project definition repository    |
+  | --watch         | -w    | watch the source folder for changes                     |

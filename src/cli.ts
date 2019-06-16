@@ -60,16 +60,16 @@ switch (mainOptions.command) {
         break;
         case 'validate': 
           const serviceValidateOpts = commandLineArgs([
-            { name: 'schema', alias: 's', type: String }
+            { name: 'sourceFolder', alias: 's', type: String }
           ], { argv: serviceArgv });
 
-          if(serviceValidateOpts.schema) {
-            service.validate(serviceValidateOpts.schema)
+          if(serviceValidateOpts.sourceFolder) {
+            service.validate(serviceValidateOpts.sourceFolder)
               .then(data => Logger.success("Schema valid"))
               .catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
           } else {
             Logger.error("One or mor parameter missing");
-            console.log("Usage: $ rsi service validate --schema <pathToSchema>");
+            console.log("Usage: $ rsi service validate --sourceFolder <pathToServiceFolder>");
           }
         break;
         case 'release': 
@@ -98,12 +98,12 @@ switch (mainOptions.command) {
 
             // check if we are watching
             if (serviceRenderOpts.watch) {
-              watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./src/"), (monitor) => {
+              watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./"), (monitor) => {
                 monitor.files[paths.schema]
-                Logger.info(`Watching ${paths.schema}...`);
-                monitor.on("changed", () => {
+                Logger.info(`Watching ${serviceRenderOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
                   // Handle file changes
-                  Logger.info(`Change detected in ${paths.schema}.`);
+                  Logger.info(`Change detected in ${where}.`);
                   service.parseSchemas([paths.schema]).then(payload => {
                     service.render(payload).then(data => {
                       data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => {
@@ -122,7 +122,8 @@ switch (mainOptions.command) {
         case 'markdown': 
           const serviceDocumentOpts = commandLineArgs([
             { name: 'sourceFolder', alias: 's', type: String },
-            { name: 'output', alias: 'o', type: String }
+            { name: 'output', alias: 'o', type: String },
+            { name: 'watch', alias: 'w', type: Boolean }
 
           ], { argv: serviceArgv });
 
@@ -139,6 +140,24 @@ switch (mainOptions.command) {
                 Logger.success("Documented scuccessfully")
               })
               .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+
+             // check if we are watching
+            if (serviceDocumentOpts.watch) {
+              watch.createMonitor(path.join(serviceDocumentOpts.sourceFolder, "./"), (monitor) => {
+                monitor.files[paths.schema, paths.changelog, paths.package]
+                Logger.info(`Watching ${serviceDocumentOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
+                  // Handle file changes
+                  Logger.info(`Change detected in ${where}.`);
+                  service.renderMarkdown(paths.schema, paths.package, paths.changelog)
+                  .then(data => {
+                    data.pipe(vfs.dest(serviceDocumentOpts.output));
+                    Logger.success("Documented scuccessfully")
+                  })
+                  .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+                });
+              })
+            }
           } else {
             Logger.error("One or more parameter missing");
             Logger.info("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");

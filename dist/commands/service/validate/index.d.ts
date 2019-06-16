@@ -1,1 +1,1 @@
-export declare function validate(candidate?: string): Promise<any>;
+export declare function validate(sourceFolder?: string): Promise<any>;
