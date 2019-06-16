@@ -47,7 +47,7 @@ switch (mainOptions.command) {
                     { type: 'input', name: 'version', message: 'What is the service version?', default: serviceInitOpts.version || "0.0.1" },
                     { type: 'input', name: 'description', message: 'Give a short desciption of your service?', default: serviceInitOpts.description || "some service" },
                     { type: 'input', name: 'author', message: 'Who authored the service?', default: serviceInitOpts.author || process.env.LOGNAME },
-                    { type: 'input', name: 'email', message: 'What is teh authors email?', default: serviceInitOpts.email, validate: (inp) => {
+                    { type: 'input', name: 'email', message: 'What is the authors email?', default: serviceInitOpts.email, validate: (inp) => {
                             if (!inp)
                                 return false;
                             const isEmail = inp.match(/^\w+@\w+\.\w+$/);
