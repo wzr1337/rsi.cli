@@ -1,3 +1,21 @@
+<a name="0.2.5"></a>
+## [0.2.5](https://github.com/wzr1337/rsi.cli/compare/0.2.4...0.2.5) (2019-06-17)
+
+
+### Bug Fixes
+
+* **assests:** schema asset to use the right $schema reference ([41beee3](https://github.com/wzr1337/rsi.cli/commit/41beee3))
+
+
+### Features
+
+* **service:** use similar syntax for all commands, always acceptiong folder instead of file ([e7949ea](https://github.com/wzr1337/rsi.cli/commit/e7949ea))
+* **service.init:** ask for missing config ([de44483](https://github.com/wzr1337/rsi.cli/commit/de44483))
+* **service.markdown:** render Types into markdown ([36b81fe](https://github.com/wzr1337/rsi.cli/commit/36b81fe))
+* **service.validate:** allow watching folder to revalidate ([f53f470](https://github.com/wzr1337/rsi.cli/commit/f53f470))
+
+
+
 <a name="0.2.4"></a>
 ## [0.2.4](https://github.com/wzr1337/rsi.cli/compare/0.2.3...0.2.4) (2019-06-14)
 
