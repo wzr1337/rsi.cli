@@ -1,5 +1,5 @@
 {
   "name": "rsi.service.{{name}}",
-  "$schema": "rsi#v2",
+  "$schema": "https://github.com/wzr1337/rsi.schema/blob/2.0.0/dist/$rsi.schema.json",
   "description": "{{description}}"
 }

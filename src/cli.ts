@@ -8,6 +8,7 @@ import * as path from "path";
 import { existsSync } from "fs";
 import * as watch from "watch";
 import { Writable } from "stream";
+import * as inquirer  from "inquirer";
 
 
 /* first - parse the main command */
@@ -31,25 +32,62 @@ switch (mainOptions.command) {
             { name: 'version', alias: 'v', type: String },
           ], { argv: serviceArgv });
 
-          if(serviceInitOpts.author && serviceInitOpts.email && serviceInitOpts.name && serviceInitOpts.output) {
-            service.init(serviceInitOpts as service.serviceMeta).pipe(vfs.dest(serviceInitOpts.output));
-          } else {
-            Logger.error("One or mor parameter missing");
-            console.log("Usage: $ rsi service init --name <servicename> --author \"<username>\" --email <email> --output <outputfolder>");
-          }
+          const questions = [
+            { type: 'input', name: 'name', message: 'What is the service name?', default: serviceInitOpts.name, validate: (inp:string) => {
+              if (!inp) return false;
+              const isEmail = inp.match(/^\w+$/);
+              return (isEmail !== null) || "not a valid name, only characters and numbers allowed";
+            }},
+            { type: 'input', name: 'version', message: 'What is the service version?', default: serviceInitOpts.version || "0.0.1"},
+            { type: 'input', name: 'description', message: 'Give a short desciption of your service?', default: serviceInitOpts.description || "some service"},
+            { type: 'input', name: 'author', message: 'Who authored the service?', default: serviceInitOpts.author || process.env.LOGNAME},
+            { type: 'input', name: 'email', message: 'What is the authors email?', default: serviceInitOpts.email, validate: (inp:string) => {
+              if (!inp) return false;
+              const isEmail = inp.match(/^\w+@\w+\.\w+$/);
+              return (isEmail !== null) || "not a valid email address";
+            }},
+            { type: 'input', name: 'output', message: 'output directory', default: serviceInitOpts.output || "./myNewService"}
+          ];
+          
+          if(!(serviceInitOpts.author && serviceInitOpts.email && serviceInitOpts.name && serviceInitOpts.output)) {
+            Logger.info("Shortcut usage: $ rsi service init --name <servicename> --author \"<username>\" --email <email> --output <outputfolder>\n\r\n\r");
+          }   
+
+          inquirer.prompt(questions as inquirer.Questions).then((answers)=> {
+            console.log(answers)
+            service.init(answers as service.serviceMeta).pipe(vfs.dest(answers.output));
+          });
         break;
         case 'validate': 
           const serviceValidateOpts = commandLineArgs([
-            { name: 'schema', alias: 's', type: String }
+            { name: 'sourceFolder', alias: 's', type: String },
+            { name: 'watch', alias: 'w', type: Boolean }
           ], { argv: serviceArgv });
 
-          if(serviceValidateOpts.schema) {
-            service.validate(serviceValidateOpts.schema)
+          if(serviceValidateOpts.sourceFolder) {
+            const paths = {
+              schema : path.join(serviceValidateOpts.sourceFolder, "./src/schema.json"),
+            }
+            service.validate(paths.schema)
               .then(data => Logger.success("Schema valid"))
               .catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+             // check if we are watching
+             if (serviceValidateOpts.watch) {
+              watch.createMonitor(path.join(serviceValidateOpts.sourceFolder, "./"), (monitor) => {
+                monitor.files[paths.schema]
+                Logger.info(`Watching ${serviceValidateOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
+                  // Handle file changes
+                  Logger.info(`Change detected in ${where}.`);
+                  service.validate(paths.schema)
+                  .then(data => Logger.success("Schema valid"))
+                  .catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+                });
+              })
+            }
           } else {
             Logger.error("One or mor parameter missing");
-            console.log("Usage: $ rsi service validate --schema <pathToSchema>");
+            console.log("Usage: $ rsi service validate --sourceFolder <pathToServiceFolder>");
           }
         break;
         case 'release': 
@@ -78,12 +116,12 @@ switch (mainOptions.command) {
 
             // check if we are watching
             if (serviceRenderOpts.watch) {
-              watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./src/"), (monitor) => {
+              watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./"), (monitor) => {
                 monitor.files[paths.schema]
-                Logger.info(`Watching ${paths.schema}...`);
-                monitor.on("changed", () => {
+                Logger.info(`Watching ${serviceRenderOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
                   // Handle file changes
-                  Logger.info(`Change detected in ${paths.schema}.`);
+                  Logger.info(`Change detected in ${where}.`);
                   service.parseSchemas([paths.schema]).then(payload => {
                     service.render(payload).then(data => {
                       data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => {
@@ -102,7 +140,8 @@ switch (mainOptions.command) {
         case 'markdown': 
           const serviceDocumentOpts = commandLineArgs([
             { name: 'sourceFolder', alias: 's', type: String },
-            { name: 'output', alias: 'o', type: String }
+            { name: 'output', alias: 'o', type: String },
+            { name: 'watch', alias: 'w', type: Boolean }
 
           ], { argv: serviceArgv });
 
@@ -119,6 +158,24 @@ switch (mainOptions.command) {
                 Logger.success("Documented scuccessfully")
               })
               .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+
+             // check if we are watching
+            if (serviceDocumentOpts.watch) {
+              watch.createMonitor(path.join(serviceDocumentOpts.sourceFolder, "./"), (monitor) => {
+                monitor.files[paths.schema, paths.changelog, paths.package]
+                Logger.info(`Watching ${serviceDocumentOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
+                  // Handle file changes
+                  Logger.info(`Change detected in ${where}.`);
+                  service.renderMarkdown(paths.schema, paths.package, paths.changelog)
+                  .then(data => {
+                    data.pipe(vfs.dest(serviceDocumentOpts.output));
+                    Logger.success("Documented scuccessfully")
+                  })
+                  .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+                });
+              })
+            }
           } else {
             Logger.error("One or more parameter missing");
             Logger.info("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");

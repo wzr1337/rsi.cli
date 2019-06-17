@@ -20,9 +20,15 @@
 
 * [General information](#General)
 * [Changelog](#Changelog)
+* Resources / Object Definitions
 {{#each spec.resources}}
   {{!-- iterate over all resources --}}
-* [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}})
+  * [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}}Object)
+{{/each}}
+* Type Definitions
+{{#each spec.types}}
+  {{!-- iterate over all types --}}
+  * [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}}Type)
 {{/each}}
 
 # <a name="General"></a>General information
@@ -45,12 +51,15 @@ Contributors:
 {{safeString changelog}}
 ```
 
-{{#each spec.resources}}
-# <a name="{{@key}}"></a>{{@key}}
+# <a name="Objects"></a>Resources / Object Definitions
 
-{{this.description}}
+The following section defines the resources available within this service. Resources are collections of `xObjects` and each `Object` has its own `id` and `uri`, so that they can be addressed separately.
+
+{{#each spec.resources}}
 
 ## <a name="{{@key}}Object"></a>{{@key}}Object
+
+{{this.description}}
 
 ### Attributes
 
@@ -216,7 +225,7 @@ Location: /{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-
 {{/each}}
 
 
-## Element level access (`/{{extractServiceName ../meta.name}}/{{@key}}/<uuid>`)
+### Element level access (`/{{extractServiceName ../meta.name}}/{{@key}}/<uuid>`)
 {{#each this.objectModel.accessMethods}}
 #### {{toUpperCase @key }}
 
@@ -377,4 +386,23 @@ Location: /{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-
 {{/ifnEqCi}}
 {{/each}}
 
+{{/each}}
+
+# Type Definitions
+
+Types - or nested objects - do not have their own `id` or `uri`. Therefore, they can not be adressed separately and are treated as atomic. Types define the nature of an embedded JSON structure in [Objects][(#Objects).
+
+{{#each spec.types}}
+
+## <a name="{{@key}}Type"></a>{{@key}}Type
+{{this.description}}
+
+### Attributes
+
+| name                         | description                                                | type          | format        | unit(s)       | value(s)              |
+|------------------------------|------------------------------------------------------------|---------------|---------------|---------------|-----------------------|
+{{!-- iterate over all attributes of a type --}}
+{{#each this.attributes}}
+| {{strech @key 28}} | {{strech this.description 58}} | {{strech this.type 13 }} | {{strech this.format 13}} | {{strech this.unit 13}} | {{getValue this}} |
+{{/each}}
 {{/each}}

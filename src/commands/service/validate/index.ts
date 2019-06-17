@@ -35,8 +35,7 @@ export async function validate(obj:any) {
   return result.value;
 } */
 
-export async function validate(candidate?:string):Promise<any> {
-  candidate = candidate || path.join(process.cwd(), "src/schema.json");
+export async function validate(schemaPath?:string):Promise<any> {
   let ajv = new Ajv({
     //schemaId: 'id',
     allErrors: true,
@@ -46,9 +45,9 @@ export async function validate(candidate?:string):Promise<any> {
   // To use Ajv with draft-06 schemas you need to explicitly add the meta-schema to the validator instance
   ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 
-  let validate = ajv.compile(readFile(path.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
+  let $validate = ajv.compile(readFile(path.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
   
-  let result = await validate(readFile(candidate));
+  await $validate(readFile(schemaPath));
  
-  if (validate.errors) throw {validationErrors: validate.errors};
+  if ($validate.errors) throw {validationErrors: $validate.errors};
 }

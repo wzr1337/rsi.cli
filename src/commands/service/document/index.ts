@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { readFileSync, writeFile, readdir, readFile, readdirSync, fstat } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import { Readable } from 'stream';
 import Handlebars from "handlebars";
 import File from "vinyl";
@@ -29,9 +29,6 @@ const loadTemplates = async function(pathToTemplates):Promise<{}> {
  * @param  {tmplpath}  template path to all templates used to render
  */
 const render = async (data, pathToTemplates) => {
-
-  //var args = [...arguments]; spread operator does not work
-  var args = Array.from(arguments);
 
   if (!data || null === data || !pathToTemplates) throw new Error("missing data");
   if (!pathToTemplates) throw new Error("missing pathToTemplates");
@@ -79,8 +76,10 @@ const render = async (data, pathToTemplates) => {
       if (property.hasOwnProperty("oneOf")) {
         var refs=[];
         for (var key in property.oneOf) {
-          var objname = /\w*Object/.exec(property.oneOf[key]['#ref']);
-          refs.push("[/" + property.oneOf[key]['#ref'].replace(/\./g, '/') + '](#' + objname + ')');
+          var objname = /((\w+)Object|(\w+)Type)/.exec(property.oneOf[key]['#ref']);
+          if (null !== objname) {
+            refs.push("[/" + property.oneOf[key]['#ref'].replace(/\./g, '/') + '](#' + objname[0] + ')');
+          }
         }
         return new Handlebars.SafeString(refs.join("<br />"));
       }
