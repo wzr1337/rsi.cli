@@ -110,7 +110,7 @@ describe("service command init", function() {
 
         expect(schema["$schema"]).toBeDefined();
         expect(typeof(schema["$schema"])).toBe("string");
-        expect(schema["$schema"]).toBe("rsi#v2");
+        expect(schema["$schema"]).toBe("https://github.com/wzr1337/rsi.schema/blob/2.0.0/dist/$rsi.schema.json");
 
         expect(schema.description).toBeDefined();
         expect(typeof(schema.description)).toBe("string");
