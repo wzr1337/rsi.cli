@@ -135,7 +135,7 @@ Usage: `rsi <commands...> [options...]`
   | --outputFolder  | -o    | the output folder for the generated documentation       |
   | --watch         | -w    | watch the source folder for changes                     |
 
-#### <a name="service.vlaidate"></a>validate
+#### <a name="service.validate"></a>validate
 
   Usage:
   
