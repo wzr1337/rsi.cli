@@ -1,4 +1,4 @@
-# Repsoitory structure
+# Repository structure
 
 Service repositories consist at least of a package.json, a README.md and the CHANGELOG.md. 
 
