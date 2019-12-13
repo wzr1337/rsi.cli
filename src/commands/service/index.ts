@@ -12,6 +12,7 @@ const sections = [
   {
     header: 'commands',
     content: [
+      { name: 'document', summary: 'render HTML documentation based on the schema' },
       { name: 'init', summary: 'initialize a new repository' },
       { name: 'release', summary: 'prepare service for release' },
       { name: 'render', summary: 'render UML from schema' },

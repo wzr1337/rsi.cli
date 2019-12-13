@@ -7,7 +7,6 @@ import * as vfs from "vinyl-fs";
 import * as path from "path";
 import { existsSync } from "fs";
 import * as watch from "watch";
-import { Writable } from "stream";
 import * as inquirer  from "inquirer";
 
 
@@ -223,7 +222,7 @@ switch (mainOptions.command) {
             }
           } else {
             Logger.error("One or more parameter missing");
-            Logger.info("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
+            Logger.info("Usage: $ rsi service document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
 
