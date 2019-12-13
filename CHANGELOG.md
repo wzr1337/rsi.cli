@@ -1,3 +1,19 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/wzr1337/rsi.cli/compare/0.2.5...0.3.0) (2019-12-13)
+
+
+### Bug Fixes
+
+* **assets.repo:** fix a typo ([dd7135e](https://github.com/wzr1337/rsi.cli/commit/dd7135e))
+* **service.document:** add missing documentation ([7be9a8b](https://github.com/wzr1337/rsi.cli/commit/7be9a8b))
+
+
+### Features
+
+* **service:** allows to generate HTML documentation ([0d7bbe4](https://github.com/wzr1337/rsi.cli/commit/0d7bbe4))
+
+
+
 <a name="0.2.5"></a>
 ## [0.2.5](https://github.com/wzr1337/rsi.cli/compare/0.2.4...0.2.5) (2019-06-17)
 
