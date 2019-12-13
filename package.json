@@ -1,7 +1,7 @@
 {
   "name": "rsi.cli",
   "longname": "RSI (RESTful Service Interface) command line interface",
-  "version": "0.2.5",
+  "version": "0.2.6-pre",
   "description": "The swiss army knife for RSI related tasks.",
   "repository": {
     "type": "git",
@@ -35,7 +35,9 @@
     "command-line-usage": "^5.0.5",
     "enjoi": "^4.1.0",
     "handlebars": "^4.1.2",
+    "highlight.js": "^9.17.0",
     "inquirer": "^6.3.1",
+    "marked": "^0.7.0",
     "mustache": "^3.0.0",
     "node-plantuml": "^0.8.1",
     "rsi.schema": "git+https://github.com/wzr1337/rsi.schema.git",

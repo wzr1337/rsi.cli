@@ -2,7 +2,7 @@ import commandLineUsage from "command-line-usage";
 export { init, serviceMeta } from "./init";
 export { validate } from "./validate";
 export { render, loadTemplates, parseSchemas } from "./render";
-export { renderMarkdown } from "./document";
+export { renderMarkdown, renderHTML } from "./document";
 
 const sections = [
   {

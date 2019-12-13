@@ -138,6 +138,51 @@ switch (mainOptions.command) {
           }
         break;
         case 'markdown': 
+          const serviceMarkdowntOpts = commandLineArgs([
+            { name: 'sourceFolder', alias: 's', type: String },
+            { name: 'output', alias: 'o', type: String },
+            { name: 'watch', alias: 'w', type: Boolean }
+
+          ], { argv: serviceArgv });
+
+          if(serviceMarkdowntOpts.sourceFolder && serviceMarkdowntOpts.output) {
+            const paths = {
+              schema : path.join(serviceMarkdowntOpts.sourceFolder, "./src/schema.json"),
+              package : path.join(serviceMarkdowntOpts.sourceFolder, "./package.json"),
+              changelog : existsSync(path.join(serviceMarkdowntOpts.sourceFolder, "./changelog.md")) ? path.join(serviceMarkdowntOpts.sourceFolder, "./changelog.md") : undefined
+            }
+
+            service.renderMarkdown(paths.schema, paths.package, paths.changelog)
+              .then(data => {
+                data.pipe(vfs.dest(serviceMarkdowntOpts.output));
+                Logger.success("Documented scuccessfully")
+              })
+              .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+
+             // check if we are watching
+            if (serviceMarkdowntOpts.watch) {
+              watch.createMonitor(path.join(serviceMarkdowntOpts.sourceFolder, "./"), (monitor) => {
+                monitor.files[paths.schema, paths.changelog, paths.package]
+                Logger.info(`Watching ${serviceMarkdowntOpts.sourceFolder}`);
+                monitor.on("changed", (where) => {
+                  // Handle file changes
+                  Logger.info(`Change detected in ${where}.`);
+                  service.renderMarkdown(paths.schema, paths.package, paths.changelog)
+                  .then(data => {
+                    data.pipe(vfs.dest(serviceMarkdowntOpts.output));
+                    Logger.success("Documented scuccessfully")
+                  })
+                  .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+                });
+              })
+            }
+          } else {
+            Logger.error("One or more parameter missing");
+            Logger.info("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
+          }
+        break;
+
+        case 'document': 
           const serviceDocumentOpts = commandLineArgs([
             { name: 'sourceFolder', alias: 's', type: String },
             { name: 'output', alias: 'o', type: String },
@@ -152,12 +197,12 @@ switch (mainOptions.command) {
               changelog : existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md")) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined
             }
 
-            service.renderMarkdown(paths.schema, paths.package, paths.changelog)
+            service.renderHTML(paths.schema, paths.package, paths.changelog)
               .then(data => {
                 data.pipe(vfs.dest(serviceDocumentOpts.output));
                 Logger.success("Documented scuccessfully")
               })
-              .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+              //.catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
 
              // check if we are watching
             if (serviceDocumentOpts.watch) {
@@ -181,6 +226,7 @@ switch (mainOptions.command) {
             Logger.info("Usage: $ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
+
         default: 
           service.printHelp();
       }

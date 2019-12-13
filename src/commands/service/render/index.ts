@@ -323,8 +323,13 @@ export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema>
                 });
                 attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
               }
+              else if(modelAttribute.items && modelAttribute.items.type !== "object") {
+                let attrTypes:string[] = [modelAttribute.items.type];
+                // @@TODO: may there be arrays of enums? ==> references will fail and enums will not be created
+                attribute.type = attrTypes.map((e => e+ "[]")).join(" | ");
+              }
               else {
-                Logger.error(`items must be object: ${namespace.name}.${cla$$.name}`);
+                Logger.error(`items must be object: ${namespace.name}.${cla$$.name}:${attributeName}`);
               }
             }
             //we found a primitive type ;)
