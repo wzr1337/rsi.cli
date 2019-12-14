@@ -12,8 +12,8 @@
     "rsi": "./dist/cli.js"
   },
   "scripts": {
-    "test": "npm run build && npm run test:only",
-    "test:only": "jasmine --config=./jasmine.json",
+    "test": "rimraf ./dist/ && npm run build:prod && npm run test:only",
+    "test:only": "jest --coverage --verbose=false",
     "test:prod": "npm run build:prod && npm run test:only",
     "build": "npm run build:dev",
     "build:dev": "tsc",
@@ -37,6 +37,7 @@
     "handlebars": "^4.1.2",
     "highlight.js": "^9.17.0",
     "inquirer": "^6.3.1",
+    "jest": "^24.9.0",
     "marked": "^0.7.0",
     "mustache": "^3.0.0",
     "node-plantuml": "^0.8.1",
@@ -52,7 +53,7 @@
     "@types/command-line-args": "^5.0.0",
     "@types/command-line-usage": "^5.0.1",
     "@types/handlebars": "^4.1.0",
-    "@types/jasmine": "^2.8.8",
+    "@types/jest": "^24.0.23",
     "@types/joi": "^13.4.5",
     "@types/mustache": "^0.8.31",
     "@types/node": "^10.11.3",
@@ -61,7 +62,6 @@
     "@types/vinyl": "^2.0.2",
     "@types/vinyl-fs": "^2.4.9",
     "conventional-changelog-cli": "^2.0.5",
-    "jasmine": "^3.2.0",
     "tslint": "^5.11.0",
     "typescript": "^3.1.1"
   }
