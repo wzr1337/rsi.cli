@@ -52,11 +52,34 @@ Usage: `rsi <commands...> [options...]`
 
   | command                       | what it does                                                    |
   | ----------------------------- | --------------------------------------------------------------- |
+  | [document](#service.document) | render HTML documentation based on the schema                   |
   | [init](#service.init)         | initialize a new repository                                     |
-  | [release](#service.release)   | prepare service for release                                    |
+  | [release](#service.release)   | prepare service for release                                     |
   | [render](#service.render)     | render UML from schema                                          |
   | [markdown](#service.markdown) | render markdown documentation based on the schema               |
   | [validate](#service.validate) | validate a schema                                               |
+
+#### <a name="service.document"></a>document
+
+  Usage:
+  
+  `$ rsi service document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
+
+  or
+
+  `$ rsi service document -s <pathToServiceFolder> -o <pathToOutputFolder>`
+  
+  Renders a set of HTML documents out of the schema.json file contained in `<pathToServiceFolder>` into `<pathToOutputFolder>`.
+
+  ![RSI.doc.demo](https://raw.githubusercontent.com/wzr1337/rsi.cli/master/assets/rsi.docu.demo.gif)
+
+**options**
+
+  | option          | alias | meaning                                                 |
+  | --------------- | ----- | ------------------------------------------------------- |
+  | --sourceFolder  | -s    | the root folder of the project definition repository    |
+  | --outputFolder  | -o    | the output folder for the generated documentation       |
+  | --watch         | -w    | watch the source folder for changes                     |
 
 #### <a name="service.init"></a>init
 
@@ -125,7 +148,7 @@ Usage: `rsi <commands...> [options...]`
 
   `$ rsi service markdown -s <pathToServiceFolder> -o <pathToOutputFolder>`
   
-  Renders a set of HTML documents out of the schema.json file contained in `<pathToServiceFolder>` into `<pathToOutputFolder>`.
+  Renders a markdown document out of the schema.json file contained in `<pathToServiceFolder>` into `<pathToOutputFolder>`.
 
 **options**
 
@@ -139,11 +162,11 @@ Usage: `rsi <commands...> [options...]`
 
   Usage:
   
-  `$ rsi service markdown --sourceFolder <pathToServiceFolder>`
+  `$ rsi service validate --sourceFolder <pathToServiceFolder>`
 
   or
 
-  `$ rsi service markdown -s <pathToServiceFolder>`
+  `$ rsi service validate -s <pathToServiceFolder>`
   
   Validates schema.json file contained in `<pathToServiceFolder>`.
 
