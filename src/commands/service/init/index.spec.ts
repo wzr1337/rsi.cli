@@ -120,4 +120,28 @@ describe("service command init", function() {
 
       });
   });
+
+  it("should fail when name misses in opts", () => {
+    try {
+      initService({name: undefined, author: "Patrick Bartsch", email: "no@where.com"})
+    } catch (error) {
+      expect(error.message).toBe("missing service name in `name` property.");
+    }
+  });
+
+  it("should fail when name misses in opts", () => {
+    try {
+      initService({name: "some", author: undefined, email: "no@where.com"})
+    } catch (error) {
+      expect(error.message).toBe("missing author name in `author` property.");
+    }
+  });
+
+  it("should fail when name misses in opts", () => {
+    try {
+      initService({name: "some", author: "someone", email: undefined})
+    } catch (error) {
+      expect(error.message).toBe("missing author email in `email` property.");
+    }
+  });
 });
