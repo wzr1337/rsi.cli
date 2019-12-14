@@ -1,6 +1,7 @@
 # RSI (RESTful Service Interface) command line interface
 
 [![Build Status](https://travis-ci.com/wzr1337/rsi.cli.svg?branch=master)](https://travis-ci.com/wzr1337/rsi.cli)
+[![npm version](https://badge.fury.io/js/rsi.cli.svg)](https://badge.fury.io/js/rsi.cli)
 
 <center>
 

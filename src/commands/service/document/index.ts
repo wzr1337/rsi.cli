@@ -10,7 +10,10 @@ const marked = require('marked');
 const ASSESTS_PATH = path.join(path.dirname(__filename), "../../../../assets/documentation.templates");
 
 // Handelbars helpers
-Handlebars.registerHelper('toUpperCase', string => string.toUpperCase());
+function toUpperCase(value: string) {
+  value.toUpperCase();
+}
+Handlebars.registerHelper('toUpperCase', toUpperCase);
 
 Handlebars.registerHelper('extractServiceName', (serviceName: string /** e.g. rsi.service.something */) => {
   if (!serviceName) return "_undefined_"
