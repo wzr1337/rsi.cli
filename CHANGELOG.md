@@ -1,5 +1,10 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/wzr1337/rsi.cli/compare/v0.3.0...v0.3.1) (2019-12-14)
+
+
+
 <a name="0.3.0"></a>
-# [0.3.0](https://github.com/wzr1337/rsi.cli/compare/0.2.5...0.3.0) (2019-12-13)
+# [0.3.0](https://github.com/wzr1337/rsi.cli/compare/0.2.5...v0.3.0) (2019-12-13)
 
 
 ### Bug Fixes
