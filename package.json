@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "rimraf ./dist/ && npm run build:prod && npm run test:only",
-    "test:only": "jest --coverage --verbose=false",
+    "test:only": "jest --verbose=false",
     "test:prod": "npm run build:prod && npm run test:only",
     "build": "npm run build:dev",
     "build:dev": "tsc",
@@ -37,7 +37,6 @@
     "handlebars": "^4.1.2",
     "highlight.js": "^9.17.0",
     "inquirer": "^6.3.1",
-    "jest": "^24.9.0",
     "marked": "^0.7.0",
     "mustache": "^3.0.0",
     "node-plantuml": "^0.8.1",
@@ -61,6 +60,7 @@
     "@types/underscore": "^1.8.9",
     "@types/vinyl": "^2.0.2",
     "@types/vinyl-fs": "^2.4.9",
+    "jest": "^24.6.0",
     "conventional-changelog-cli": "^2.0.5",
     "tslint": "^5.11.0",
     "typescript": "^3.1.1"

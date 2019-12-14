@@ -172,9 +172,9 @@ const loadTemplates = async function(pathToTemplates):Promise<{}> {
  * renderes markdown from rsi schema
  * 
  * @param  {Object}   data data object representation
- * @param  {tmplpath}  template path to all templates used to render
+ * @param  {string}  pathToTemplates path to all templates used to render
  */
-export async function compileMD (data, pathToTemplates) {
+export async function compileMD (data:Object, pathToTemplates:string) {
 
   if (!data || null === data) throw new Error("missing data");
   if (!pathToTemplates) throw new Error("missing pathToTemplates");
