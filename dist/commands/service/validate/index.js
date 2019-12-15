@@ -14,17 +14,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const ajv_1 = __importDefault(require("ajv"));
-const Logger_1 = require("../../../utils/Logger");
-function readFile(filename) {
+function loadSchema(filename) {
     var file = path_1.default.resolve(process.cwd(), filename);
-    try {
-        return JSON.parse(fs_1.default.readFileSync(file, 'utf-8'));
-    }
-    catch (err) {
-        Logger_1.Logger.error(err.message);
-        process.exit(2);
-    }
+    return JSON.parse(fs_1.default.readFileSync(file, 'utf-8'));
 }
+exports.loadSchema = loadSchema;
 /* @@ TODO: migrate to Joi for beeter reporting
 
 
@@ -53,11 +47,12 @@ function validate(schemaPath) {
         });
         // To use Ajv with draft-06 schemas you need to explicitly add the meta-schema to the validator instance
         ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
-        let $validate = ajv.compile(readFile(path_1.default.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
-        yield $validate(readFile(schemaPath));
+        let $validate = ajv.compile(loadSchema(path_1.default.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
+        yield $validate(loadSchema(schemaPath));
         if ($validate.errors)
             throw { validationErrors: $validate.errors };
+        return true;
     });
 }
 exports.validate = validate;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9zcmMvY29tbWFuZHMvc2VydmljZS92YWxpZGF0ZS9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7O0FBQ0EsZ0RBQXdCO0FBQ3hCLDRDQUFvQjtBQUNwQiw4Q0FBc0I7QUFDdEIsa0RBQStDO0FBRy9DLFNBQVMsUUFBUSxDQUFDLFFBQWU7SUFDL0IsSUFBSSxJQUFJLEdBQUcsY0FBSSxDQUFDLE9BQU8sQ0FBQyxPQUFPLENBQUMsR0FBRyxFQUFFLEVBQUUsUUFBUSxDQUFDLENBQUM7SUFDakQsSUFBSTtRQUNGLE9BQU8sSUFBSSxDQUFDLEtBQUssQ0FBQyxZQUFFLENBQUMsWUFBWSxDQUFDLElBQUksRUFBRSxPQUFPLENBQUMsQ0FBQyxDQUFDO0tBQ25EO0lBQUMsT0FBTSxHQUFHLEVBQUU7UUFDVCxlQUFNLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUMxQixPQUFPLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDO0tBQ25CO0FBQ0gsQ0FBQztBQUVEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFrQkk7QUFFSixTQUFzQixRQUFRLENBQUMsVUFBa0I7O1FBQy9DLElBQUksR0FBRyxHQUFHLElBQUksYUFBRyxDQUFDO1lBQ2hCLGlCQUFpQjtZQUNqQixTQUFTLEVBQUUsSUFBSTtZQUNmLFlBQVksRUFBRSxJQUFJO1NBRW5CLENBQUMsQ0FBQztRQUNILHdHQUF3RztRQUN4RyxHQUFHLENBQUMsYUFBYSxDQUFDLE9BQU8sQ0FBQyx3Q0FBd0MsQ0FBQyxDQUFDLENBQUM7UUFFckUsSUFBSSxTQUFTLEdBQUcsR0FBRyxDQUFDLE9BQU8sQ0FBQyxRQUFRLENBQUMsY0FBSSxDQUFDLElBQUksQ0FBQyxTQUFTLEVBQUUsMkRBQTJELENBQUMsQ0FBQyxDQUFDLENBQUM7UUFFekgsTUFBTSxTQUFTLENBQUMsUUFBUSxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUM7UUFFdEMsSUFBSSxTQUFTLENBQUMsTUFBTTtZQUFFLE1BQU0sRUFBQyxnQkFBZ0IsRUFBRSxTQUFTLENBQUMsTUFBTSxFQUFDLENBQUM7SUFDbkUsQ0FBQztDQUFBO0FBZkQsNEJBZUMifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9zcmMvY29tbWFuZHMvc2VydmljZS92YWxpZGF0ZS9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7O0FBQ0EsZ0RBQXdCO0FBQ3hCLDRDQUFvQjtBQUNwQiw4Q0FBc0I7QUFHdEIsU0FBZ0IsVUFBVSxDQUFDLFFBQWU7SUFDeEMsSUFBSSxJQUFJLEdBQUcsY0FBSSxDQUFDLE9BQU8sQ0FBQyxPQUFPLENBQUMsR0FBRyxFQUFFLEVBQUUsUUFBUSxDQUFDLENBQUM7SUFDakQsT0FBTyxJQUFJLENBQUMsS0FBSyxDQUFDLFlBQUUsQ0FBQyxZQUFZLENBQUMsSUFBSSxFQUFFLE9BQU8sQ0FBQyxDQUFDLENBQUM7QUFDcEQsQ0FBQztBQUhELGdDQUdDO0FBRUQ7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQWtCSTtBQUVKLFNBQXNCLFFBQVEsQ0FBQyxVQUFrQjs7UUFDL0MsSUFBSSxHQUFHLEdBQUcsSUFBSSxhQUFHLENBQUM7WUFDaEIsaUJBQWlCO1lBQ2pCLFNBQVMsRUFBRSxJQUFJO1lBQ2YsWUFBWSxFQUFFLElBQUk7U0FFbkIsQ0FBQyxDQUFDO1FBQ0gsd0dBQXdHO1FBQ3hHLEdBQUcsQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLHdDQUF3QyxDQUFDLENBQUMsQ0FBQztRQUVyRSxJQUFJLFNBQVMsR0FBRyxHQUFHLENBQUMsT0FBTyxDQUFDLFVBQVUsQ0FBQyxjQUFJLENBQUMsSUFBSSxDQUFDLFNBQVMsRUFBRSwyREFBMkQsQ0FBQyxDQUFDLENBQUMsQ0FBQztRQUUzSCxNQUFNLFNBQVMsQ0FBQyxVQUFVLENBQUMsVUFBVSxDQUFDLENBQUMsQ0FBQztRQUV4QyxJQUFJLFNBQVMsQ0FBQyxNQUFNO1lBQUUsTUFBTSxFQUFDLGdCQUFnQixFQUFFLFNBQVMsQ0FBQyxNQUFNLEVBQUMsQ0FBQztRQUNqRSxPQUFPLElBQUksQ0FBQztJQUNkLENBQUM7Q0FBQTtBQWhCRCw0QkFnQkMifQ==

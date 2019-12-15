@@ -1,0 +1,9 @@
+{
+  "name": "rsi.service.test",
+  "$schema": "rsi#v2",
+  "description": "This service lacks description, please fill it in.",
+  "resources": {
+  },
+  "types": {
+  }
+}

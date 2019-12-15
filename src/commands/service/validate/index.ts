@@ -2,17 +2,11 @@
 import path from "path";
 import fs from "fs";
 import Ajv from "ajv";
-import { Logger } from "../../../utils/Logger";
 
 
-function readFile(filename:string){
+export function loadSchema(filename:string){
   var file = path.resolve(process.cwd(), filename);
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf-8'));
-  } catch(err) {
-      Logger.error(err.message);
-      process.exit(2);
-  }
+  return JSON.parse(fs.readFileSync(file, 'utf-8'));
 }
 
 /* @@ TODO: migrate to Joi for beeter reporting
@@ -35,7 +29,7 @@ export async function validate(obj:any) {
   return result.value;
 } */
 
-export async function validate(schemaPath?:string):Promise<any> {
+export async function validate(schemaPath?:string):Promise<boolean> {
   let ajv = new Ajv({
     //schemaId: 'id',
     allErrors: true,
@@ -45,9 +39,10 @@ export async function validate(schemaPath?:string):Promise<any> {
   // To use Ajv with draft-06 schemas you need to explicitly add the meta-schema to the validator instance
   ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 
-  let $validate = ajv.compile(readFile(path.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
+  let $validate = ajv.compile(loadSchema(path.join(__dirname, '../../../../node_modules/rsi.schema/dist/$rsi.schema.json')));
   
-  await $validate(readFile(schemaPath));
+  await $validate(loadSchema(schemaPath));
  
   if ($validate.errors) throw {validationErrors: $validate.errors};
+  return true;
 }
