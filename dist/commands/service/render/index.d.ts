@@ -1,35 +1,6 @@
 /// <reference types="node" />
 import { Readable } from "stream";
-export interface ISchemaClass {
-    name: string;
-    properties?: {
-        type: string;
-        name: string;
-    }[];
-}
-export interface ISchemaEnum {
-    name: string;
-    belongsTo: string;
-    properties: string[];
-}
-export interface ISchemaType {
-    name: string;
-}
-export interface ISchemaReference {
-    from: string;
-    to: string;
-    property: string;
-}
-export interface ISchemaNameSpace {
-    name: string;
-    classes?: ISchemaClass[];
-    enums?: ISchemaEnum[];
-    types?: ISchemaType[];
-    references?: ISchemaReference[];
-}
-export interface ISchema {
-    namespaces: ISchemaNameSpace[];
-}
+import { ISchema } from "./interfaces";
 /**
  * parses a schema from RSI definitions
  * @param  {String}   schemaPath path to RSI schema
@@ -48,6 +19,11 @@ export declare function render(schemaData: ISchema): Promise<Readable>;
 export declare function loadTemplates(mustachesPath: string): Promise<{
     [templateName: string]: string;
 }>;
+export declare function propertyCompare(a: {
+    name: string;
+}, b: {
+    name: string;
+}): 1 | 4 | -4 | 3 | -3 | 2 | -2 | -1 | 0;
 /**
  * parses schema(s) into ISchema compliant objects
  * @param  {string|Array<string>} schemapaths path(s) to viwi scheme file

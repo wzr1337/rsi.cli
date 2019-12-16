@@ -1,5 +1,6 @@
-import { loadTemplates, getSampleSchema } from ".";
+import { loadTemplates, getSampleSchema, propertyCompare, render, parseSchemas } from ".";
 import * as path from "path";
+import { Stream } from "stream";
 
 
 describe("service command init", function() {
@@ -20,5 +21,53 @@ describe("service command init", function() {
   it("should render the example correctly", async () => {
     const schema = await getSampleSchema();
     expect(!true).toBeFalsy();
-  })
+  });
+
+  it("should correctly compare properties", () => {
+    expect(propertyCompare({name:"id"}, {name: "id"})).toBe(-4);
+    expect(propertyCompare({name:"name"}, {name: "id"})).toBe(-3);
+    expect(propertyCompare({name:"uri"}, {name: "id"})).toBe(-2);
+    expect(propertyCompare({name:"a"}, {name: "b"})).toBe(-1);
+    expect(propertyCompare({name:"b"}, {name: "a"})).toBe(1);
+    expect(propertyCompare({name:"$TGRE$"}, {name: "uri"})).toBe(2);
+    expect(propertyCompare({name:"$TGRE$"}, {name: "name"})).toBe(3);
+    expect(propertyCompare({name:"$TGRE$"}, {name: "id"})).toBe(4);
+  });
+
+  it("should render an empty puml", async () => {
+    const stream = await render({namespaces:[]});
+    stream.on("data", (chunk) => {
+      expect(typeof chunk).toBe("object");
+      expect(chunk._isVinyl).toBe(true);
+    })
+  });
+
+  it("should fail rendering an undefined schema", async () => {
+    try {
+      await render(undefined);
+      expect(true).toBeFalsy();
+    } catch (error) {
+      expect(error.message).toBeDefined()
+    }
+  });
+
+  it("should fail parsing a on existing schema", async () => {
+    try {
+      await parseSchemas("");
+      expect(true).toBeFalsy();
+    } catch (error) {
+      expect(error.message).toBe("Can not parse schema from !")
+    }
+  });
+
+  it("should parse an existing schema", async () => {
+    const schema = await parseSchemas("src/__mocks__/dummyschema.json");
+    expect(schema.namespaces).toBeDefined();
+    expect(Array.isArray(schema.namespaces)).toBeTruthy();
+    expect(schema.namespaces[0].classes).toBeDefined();
+    expect(Array.isArray(schema.namespaces[0].classes)).toBeTruthy();
+    expect(schema.namespaces[0].types).toBeDefined();
+    expect(Array.isArray(schema.namespaces[0].types)).toBeTruthy();
+  });
+
 })

@@ -4,41 +4,7 @@ import * as fs from "fs";
 import { Readable } from "stream";
 import File from "vinyl";
 import { Logger } from "../../../utils/Logger";
-
-export interface ISchemaClass {
-  name: string,
-  properties?: {
-    type: string,
-    name: string
-  }[]
-}
-
-export interface ISchemaEnum {
-  name: string,
-  belongsTo: string,
-  properties: string[]
-}
-
-export interface ISchemaType {
-  name: string
-}
-
-export interface ISchemaReference {
-  from: string,
-  to: string,
-  property: string
-}
-
-export interface ISchemaNameSpace {
-  name: string,
-  classes?: ISchemaClass[],
-  enums?: ISchemaEnum[],
-  types?: ISchemaType[],
-  references?: ISchemaReference[]
-}
-export interface ISchema {
-  namespaces: ISchemaNameSpace[]
-}
+import { ISchema, ISchemaNameSpace, ISchemaReference } from "./interfaces";
 
 const SAMPLEDATA:ISchema = {
   namespaces: [
@@ -177,7 +143,7 @@ export async function loadTemplates(mustachesPath:string):Promise<{[templateName
 
 
  // compare property names for sorting
-function propertyCompare (a:{name:string}, b:{name:string}) {
+export function propertyCompare (a:{name:string}, b:{name:string}) {
   if (a.name === "id") 
     return -4
   if (a.name === "name") 

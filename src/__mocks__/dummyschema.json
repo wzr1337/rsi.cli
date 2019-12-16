@@ -1,9 +1,387 @@
 {
-  "name": "rsi.service.test",
-  "$schema": "rsi#v2",
-  "description": "This service lacks description, please fill it in.",
-  "resources": {
+  "name": "rsi.service.media",
+  "description" : "the media service definition",
+  "$schema": "https://github.com/wzr1337/rsi.schema/blob/2.0.0/dist/$rsi.schema.json",
+  "resources" : {
+    "collections": {
+      "description": "The media collections can also be understood as media queues of the renderer. Media collections can only contain playable media like tracks, videos or pictures.",
+      "objectModel": {
+        "attributes": {
+          "id": {
+            "description": "collection id",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "collection name",
+            "type": "string"
+          },
+          "uri": {
+            "description": "object uri",
+            "type": "string",
+            "format": "uri"
+          },
+          "items": {
+            "description": "media collection items",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "oneOf": [
+              {
+                "#ref": "medialibrary.videosObject"
+              },
+              {
+                "#ref": "medialibrary.picturesObject"
+              },
+              {
+                "#ref": "medialibrary.tracksObject"
+              }
+              ]
+            }
+          }
+        },
+        "accessMethods": {
+          "post": {
+            "description": "Media can be any media object. All 'encapsulating' media objects like album, playlist, source etc. will be flattend to root level of mediacollection. E.g. if a playlist contains track A and B, the tracks A and B will be added to the mediacollection.",
+            "parameters": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "usesPermissions": [
+              "mediaWrite"
+            ]
+          },
+          "get": {
+            "parameters": {},
+            "usesPermissions": [
+              "mediaRead"
+            ]
+          },
+          "delete": {
+            "parameters": {},
+            "usesPermissions": [
+              "mediaWrite"
+            ]
+          }
+        }
+      },
+      "accessMethods": {
+        "post": {
+          "description": "media can be any media object. All `encapsulating` media objects like album, playlist etc. will be flattend to root level of mediacollection. E.g. if a playlist contains track A and B, the tracks A and B will be added to the mediacollection. Changing an existing mediaCollectionObject would mean a modification of its `items` property content (e.g. adding or removing items from an existing collection)",
+          "parameters": {
+            "items": {
+              "isRequired": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          },
+          "usesPermissions": [
+            "mediaWrite"
+          ]
+        },
+        "get": {
+          "parameters": {},
+          "usesPermissions": [
+            "mediaRead"
+          ]
+        }
+      }
+    },
+    "renderers": {
+      "description": "The media player renderer can be understood as the actual media player. It accepts media objects and applies actions like play, pause etc. to them.",
+      "objectModel": {
+        "attributes": {
+          "id": {
+            "description": "renderer id",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "renderer name",
+            "type": "string"
+          },
+          "uri": {
+            "description": "object uri",
+            "type": "string",
+            "format": "uri"
+          },
+          "media": {
+            "description": "current media collection",
+            "type": "object",
+            "oneOf": [
+            {
+              "#ref": "media.collectionsObject"
+            }
+            ]
+          },
+          "mediaindex": {
+            "description": "DEPRECATED: index of actual media object if media is a collection (starting index is 0)",
+            "type": "number",
+            "resolution": 1,
+            "minimum": 0
+          },
+          "currentMediaItem": {
+            "description": "the media item currently being renderered.",
+            "type": "object",
+            "oneOf": [
+            {
+              "#ref": "medialibrary.videosObject"
+            },
+            {
+              "#ref": "medialibrary.sourcesObject"
+            },
+            {
+              "#ref": "medialibrary.picturesObject"
+            },
+            {
+              "#ref": "medialibrary.tracksObject"
+            }
+            ]
+          },
+          "type": {
+            "description": "type of medium",
+            "type": "string",
+            "enum": [
+            "track",
+            "video",
+            "image"
+            ]
+          },
+          "offset": {
+            "description": "current offset",
+            "type": "number",
+            "resolution": 1,
+            "minimum": 0,
+            "unit": "ms"
+          },
+          "state": {
+            "description": "media renderers playback state",
+            "type": "string",
+            "enum": [
+            "idle",
+            "play",
+            "pause",
+            "stop",
+            "ff",
+            "fr"
+            ]
+          },
+          "repeat": {
+            "description": "repeat mode",
+            "type": "string",
+            "enum": [
+            "off",
+            "repeatall",
+            "repeatone"
+            ]
+          },
+          "shuffle": {
+            "description": "shuffle mode",
+            "type": "string",
+            "enum": [
+            "on",
+            "off"
+            ]
+          },
+          "scan": {
+            "description": "shuffle mode",
+            "type": "string",
+            "enum": [
+            "off",
+            "up",
+            "down"
+            ]
+          }
+        },
+        "accessMethods": {
+          "post": {
+            "parameters": {
+              "media": {
+                "type": "string",
+                "format": "uri"
+              },
+              "mediaindex": {
+                "type": "number",
+                "resolution": 1,
+                "minimum": 0
+              },
+              "currentMediaItem": {
+                "type": "string",
+                "format": "uri"
+              },
+              "offset": {
+                "type": "number",
+                "resolution": 1,
+                "minimum": 0,
+                "unit": "ms"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                "idle",
+                "play",
+                "pause",
+                "stop",
+                "ff",
+                "fr"
+                ]
+              },
+              "repeat": {
+                "type": "string",
+                "enum": [
+                "off",
+                "repeatall",
+                "repeatone"
+                ]
+              },
+              "shuffle": {
+                "type": "string",
+                "enum": [
+                "on",
+                "off"
+                ]
+              },
+              "scan": {
+                "type": "string",
+                "enum": [
+                "off",
+                "up",
+                "down"
+                ]
+              }
+            },
+            "usesPermissions": [
+              "mediaWrite"
+            ]
+          },
+          "get": {
+            "parameters": {},
+            "usesPermissions": [
+              "mediaRead"
+            ]
+          },
+          "subscribe": {
+            "parameters": {},
+            "usesPermissions": [
+              "mediaRead"
+            ]
+          }
+        }
+      },
+      "accessMethods": {
+        "get": {
+          "parameters": {},
+          "usesPermissions": [
+            "mediaRead"
+          ]
+        },
+        "subscribe": {
+          "parameters": {},
+          "usesPermissions": [
+            "mediaRead"
+          ]
+        }
+      }
+    }
   },
-  "types": {
+  "types" : {
+    "position": {
+      "description": "A position is the atomic positioning type used for global positioning systems like GPS", 
+      "attributes": {
+        "lat": {
+          "description": "the latitude",
+          "type": "number",
+          "unit": "degrees"
+        },
+        "long": {
+          "description": "the longitude",
+          "type": "number",
+          "unit": "degrees"
+        }
+      }
+    },
+    "journeyPosition": {
+      "description": "A journey position is the start point or stop point of a journey",
+      "attributes": {
+        "position":{
+          "description": "the vehicles position",
+          "type": "object",
+          "oneOf": [
+            {
+            "#ref": "rva.positionType"
+            }
+          ]
+        },
+        "odometer": {
+          "description": "the vehicles odometer at current position",
+          "type": "number",
+          "minimum": 0,
+          "unit": "meters"
+        },
+        "time": {
+          "description": "the time of the journey position",
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    },
+    "trackpointPosition": {
+      "description": "Location and heading of the vehicle when a trackpointpoint is recorded", 
+      "attributes": {
+        "position":{
+          "description": "the vehicles position",
+          "type": "object",
+          "oneOf": [
+            {
+            "#ref": "rva.positionType"
+            }
+          ]
+        },
+        "odometer": {
+          "description": "the vehicles odometer at current position",
+          "type": "number",
+          "minimum": 0,
+          "unit": "meters"
+        },
+        "time": {
+          "description": "the time of the journey position",
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    },
+    "trackpoint": {
+      "description": "records the position, odometer and timestamp at a given point during a journey",
+      "attributes": {
+        "position": {
+          "description": "the position of the trackpoint",
+          "type": "object",
+          "oneOf": [
+            {
+            "#ref": "rva.trackpointPositionType"
+            }
+          ]
+        },
+        "odometer": {
+          "description": "odometer reading at this point of the journey",
+          "type": "number",
+          "minimum": 0,
+          "unit": "meters"
+        },
+        "timestamp": {
+          "description": "the time and date of recording",
+          "type": "string",
+          "format": "datetime"
+        }  
+      }
+    }
   }
 }
