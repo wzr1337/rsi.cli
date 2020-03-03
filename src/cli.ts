@@ -85,7 +85,7 @@ switch (mainOptions.command) {
               })
             }
           } else {
-            Logger.error("One or mor parameter missing");
+            Logger.error("One or more parameter missing");
             console.log("Usage: $ rsi service validate --sourceFolder <pathToServiceFolder>");
           }
         break;
@@ -132,7 +132,7 @@ switch (mainOptions.command) {
               })
             }
           } else {
-            Logger.error("One or mor parameter missing");
+            Logger.error("One or more parameter missing");
             Logger.info("Usage:\n$ rsi service render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
           }
         break;
