@@ -28,7 +28,8 @@ const sections = [
   {
     header: 'commands',
     content: [
-      { name: 'service', summary: 'operate on service level' }
+      { name: 'service', summary: 'operate on service level' },
+      { name: 'bundle', summary: 'operate on multiple services' }
     ]
   }
 ]
