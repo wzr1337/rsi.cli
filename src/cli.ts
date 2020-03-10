@@ -22,7 +22,7 @@ if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
   const serviceArgv = serviceCommands._unknown || [];
   switch (serviceCommands.command) {
     case 'init':
-      initialise(serviceArgv, mainOptions.command === 'bundle');
+      optioninitialise(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'validate':
       optionValidate(serviceArgv, mainOptions.command === 'bundle');
@@ -34,13 +34,14 @@ if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
       optionRender(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'markdown':
-      document(serviceArgv, mainOptions.command === 'bundle', false);
+      optiondocument(serviceArgv, mainOptions.command === 'bundle', false);
       break;
     case 'document':
-      document(serviceArgv, mainOptions.command === 'bundle', true);
+      optiondocument(serviceArgv, mainOptions.command === 'bundle', true);
       break;
     default:
       service.printHelp();
+      break;
   }
 } else {
   interface IOptions { version: Boolean }
@@ -54,7 +55,7 @@ if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
 }
 
 // initialises a new repository
-function initialise(serviceArgv, bundle) {
+function optioninitialise(serviceArgv, bundle) {
   const serviceInitOpts = commandLineArgs([
     { name: 'author', alias: 'a', type: String },
     { name: 'description', alias: 'd', type: String },
@@ -88,8 +89,8 @@ function initialise(serviceArgv, bundle) {
   });
 }
 
-// Renders HTML documentation based on the schema
-function document(serviceArgv, bundle, html) {
+//Renders documentation(markdown and html) based on schema
+function optiondocument(serviceArgv, bundle, html) {
   const serviceDocumentOpts = commandLineArgs([
     { name: 'sourceFolder', alias: 's', type: String },
     { name: 'output', alias: 'o', type: String },
@@ -135,41 +136,51 @@ function document(serviceArgv, bundle, html) {
   }
 }
 
-// Prepare service for release
+//Prepare service for release
 function optionRelease() {
   Logger.error("`release` command currently not supported");
 }
 
-// Render UML from schema
+//Render UML from schema
 function optionRender(serviceArgv, bundle) {
   const serviceRenderOpts = commandLineArgs([
     { name: 'sourceFolder', alias: 's', type: String },
     { name: 'output', alias: 'o', type: String },
     { name: 'watch', alias: 'w', type: Boolean }
   ], { argv: serviceArgv });
+  let pathObjs = {};
   if (serviceRenderOpts.sourceFolder && serviceRenderOpts.output) {
-    const paths = { schema: path.join(serviceRenderOpts.sourceFolder, "./src/schema.json") }
+    if (bundle) {
+      let temp = createBundleObj(serviceRenderOpts.sourceFolder)
+      for (let def in temp) pathObjs[def] = temp[def].definition;
+    } else {
+      pathObjs[JSON.parse(fs.readFileSync(path.join(serviceRenderOpts.sourceFolder, "./package.json"), 'utf-8')).name] = path.join(serviceRenderOpts.sourceFolder, "./src/schema.json");
+    }
+    // const paths = { schema: path.join(serviceRenderOpts.sourceFolder, "./src/schema.json") }
     // render once 
-    service.parseSchemas([paths.schema]).then(payload => {
+    // service.parseSchemas([paths.schema]).then(payload => {
+    service.parseSchemas(pathObjs).then(payload => {
       service.render(payload).then(data => {
         data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => Logger.success(`Rendered plantuml to ${path.join(serviceRenderOpts.output, data.basename)}.`));
       }).catch(err => Logger.error("Rendering failed:", JSON.stringify(err, undefined, 2)));
     });
-    // check if we are watching
-    if (serviceRenderOpts.watch) {
-      watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./"), (monitor) => {
-        monitor.files[paths.schema]
-        Logger.info(`Watching ${serviceRenderOpts.sourceFolder}`);
-        monitor.on("changed", (where) => {
-          // Handle file changes
-          Logger.info(`Change detected in ${where}.`);
-          service.parseSchemas([paths.schema]).then(payload => {
-            service.render(payload).then(data => {
-              data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => Logger.success(`Rendered plantuml to ${path.join(serviceRenderOpts.output, data.basename)}.`));
-            }).catch(err => Logger.error("Rendering failed:", JSON.stringify(err, undefined, 2)));
+    for (let x in pathObjs) {
+      // check if we are watching
+      if (serviceRenderOpts.watch) {
+        watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./"), (monitor) => {
+          monitor.files[pathObjs[x].schema]
+          Logger.info(`Watching ${serviceRenderOpts.sourceFolder}`);
+          monitor.on("changed", (where) => {
+            // Handle file changes
+            Logger.info(`Change detected in ${where}.`);
+            service.parseSchemas([pathObjs[x].schema]).then(payload => {
+              service.render(payload).then(data => {
+                data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => Logger.success(`Rendered plantuml to ${path.join(serviceRenderOpts.output, data.basename)}.`));
+              }).catch(err => Logger.error("Rendering failed:", JSON.stringify(err, undefined, 2)));
+            });
           });
-        });
-      })
+        })
+      }
     }
   } else {
     Logger.error("One or more parameter missing");
@@ -226,6 +237,8 @@ function createBundleObj(paths) {
   }
   return bundleDepenencies;
 }
+
+//Checks dependencies are rsi
 export function filterDependencies(obj) {
   const keys = Object.keys(obj).filter(dep => {
     return dep.match(SERVICE_NAME_REGEX);

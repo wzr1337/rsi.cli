@@ -168,31 +168,29 @@ export function propertyCompare (a:{name:string}, b:{name:string}) {
 
 /**
  * parses schema(s) into ISchema compliant objects
- * @param  {string|Array<string>} schemapaths path(s) to viwi scheme file
+ * @param  {string|Array<string>} serviceDefs path(s) to viwi scheme file
  * @return {object} schema representation
  */
-export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema> {
+// export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema> {
+export async function parseSchemas(serviceDefs: Object):Promise<ISchema> {
 
-  schemapaths = Array.isArray(schemapaths) ? schemapaths : [schemapaths];
+  // serviceDefs = Array.isArray(serviceDefs) ? serviceDefs : [serviceDefs];
 
   var ret:ISchema = {
     namespaces: []
   };
-
-  for (const schemaPath of schemapaths) {
+  for (const schemaPath in serviceDefs) {
 
     try {
       // check file availablity
-      fs.accessSync(schemaPath, fs.constants.R_OK);
+      fs.accessSync(serviceDefs[schemaPath], fs.constants.R_OK);
     } catch (error) {
-      throw new Error(`Can not parse schema from ${schemaPath}!`);
+      throw new Error(`Can not parse schema from ${serviceDefs[schemaPath]}!`);
     }
 
     // start parsing if no exception was thrown
-    const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8')); // might fail an throw an error which is caught by async
- 
-    const namespaceName = (null !== schema.name.match(SERVICE_NAME_REGEX)) ? schema.name.match(SERVICE_NAME_REGEX)[2] : undefined;
-
+    const schema = JSON.parse(fs.readFileSync(serviceDefs[schemaPath], 'utf8')); // might fail an throw an error which is caught by async
+    const namespaceName = (null !== schema.name.match(SERVICE_NAME_REGEX)) ? schema.name.match(SERVICE_NAME_REGEX)[1] : undefined;
     if (!namespaceName) throw new Error("no service name found for in " + schema.name);
 
     let namespace:ISchemaNameSpace = {

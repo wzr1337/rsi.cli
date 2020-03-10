@@ -26,7 +26,7 @@ export declare function propertyCompare(a: {
 }): 1 | 4 | -4 | 3 | -3 | 2 | -2 | -1 | 0;
 /**
  * parses schema(s) into ISchema compliant objects
- * @param  {string|Array<string>} schemapaths path(s) to viwi scheme file
+ * @param  {string|Array<string>} serviceDefs path(s) to viwi scheme file
  * @return {object} schema representation
  */
-export declare function parseSchemas(schemapaths: string | string[]): Promise<ISchema>;
+export declare function parseSchemas(serviceDefs: Object): Promise<ISchema>;
