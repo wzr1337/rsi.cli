@@ -5,6 +5,7 @@ import { Readable } from "stream";
 import File from "vinyl";
 import { Logger } from "../../../utils/Logger";
 import { ISchema, ISchemaNameSpace, ISchemaReference } from "./interfaces";
+import { SERVICE_NAME_REGEX, REFERENCE_NAME_REGEX } from '../../../utils/regex';
 
 const SAMPLEDATA:ISchema = {
   namespaces: [
@@ -163,8 +164,7 @@ export function propertyCompare (a:{name:string}, b:{name:string}) {
   return 0;
 }
 
-const SERVICE_REGEX = /((?:rsi|viwi).service.([a-zA-Z][a-zA-Z0-9]+))/;
-const REFERENCE_NAME_REGEX = /[a-zA-Z0-9]+\.((?:.+Object$)|(?:.+Type$))/;
+
 
 /**
  * parses schema(s) into ISchema compliant objects
@@ -191,7 +191,7 @@ export async function parseSchemas(schemapaths:string|string[]):Promise<ISchema>
     // start parsing if no exception was thrown
     const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8')); // might fail an throw an error which is caught by async
  
-    const namespaceName = (null !== schema.name.match(SERVICE_REGEX)) ? schema.name.match(SERVICE_REGEX)[2] : undefined;
+    const namespaceName = (null !== schema.name.match(SERVICE_NAME_REGEX)) ? schema.name.match(SERVICE_NAME_REGEX)[2] : undefined;
 
     if (!namespaceName) throw new Error("no service name found for in " + schema.name);
 

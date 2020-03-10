@@ -11,7 +11,7 @@ describe("service.document", () => {
 
   it("should compile markdown only if pathToTemplates is given", async () => {
     try {
-      await compileMD({some:"data"},undefined)
+      await compileMD([{some:"data"}],undefined)
     } catch (error) {
       expect(error.message).toBe("missing pathToTemplates");
     }

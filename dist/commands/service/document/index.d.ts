@@ -8,5 +8,5 @@ import { Readable } from 'stream';
  */
 export declare function compileMD(data: Object, pathToTemplates: string): Promise<string>;
 export declare function renderMarkdown(schemaPath: string, packagePath: string, changelogPath?: string): Promise<Readable>;
-export declare function renderHTML(schemaPath: string, packagePath: string, changelogPath?: string): Promise<Readable>;
+export declare function renderHTML(obj: Object, bundle: boolean, packageInfo: Object): Promise<Readable>;
 export declare function compileHTML(data: any, pathToTemplates: any): Promise<string>;

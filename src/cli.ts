@@ -8,9 +8,9 @@ import { existsSync } from "fs";
 import * as watch from "watch";
 import * as inquirer from "inquirer";
 import fs from "fs";
+import { SERVICE_NAME_REGEX } from "./utils/regex";
 
 let bundleDepenencies = {};
-let bundleSelected = false;
 
 /* first - parse the main command */
 const mainOptions = commandLineArgs([{ name: 'command', defaultOption: true }, { name: 'sourceFolder', type: String }], { stopAtFirstUnknown: true })
@@ -18,29 +18,26 @@ const argv = mainOptions._unknown || [];
 
 /* second - parse the command options */
 if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
-  if (mainOptions.command == 'bundle') {
-    bundleSelected = true;
-  }
   const serviceCommands = commandLineArgs([{ name: 'command', defaultOption: true }], { argv, stopAtFirstUnknown: true });
   const serviceArgv = serviceCommands._unknown || [];
   switch (serviceCommands.command) {
     case 'init':
-      initialise(serviceArgv, bundleSelected);
+      initialise(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'validate':
-      optionValidate(serviceArgv, bundleSelected);
+      optionValidate(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'release':
       optionRelease();
       break;
     case 'render':
-      optionRender(serviceArgv, bundleSelected);
+      optionRender(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'markdown':
-      optionMarkdown(serviceArgv, bundleSelected);
+      optionMarkdown(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'document':
-      document(serviceArgv, bundleSelected);
+      document(serviceArgv, mainOptions.command === 'bundle');
       break;
     default:
       service.printHelp();
@@ -98,32 +95,39 @@ function document(serviceArgv, bundle) {
     { name: 'output', alias: 'o', type: String },
     { name: 'watch', alias: 'w', type: Boolean }
   ], { argv: serviceArgv });
+  let pathsObj = {}
+  let packageInfo = { name: JSON.parse(fs.readFileSync(path.join(serviceDocumentOpts.sourceFolder, "./package.json"), 'utf-8')).name, version: JSON.parse(fs.readFileSync(path.join(serviceDocumentOpts.sourceFolder, "./package.json"), 'utf-8')).version };
   if (serviceDocumentOpts.sourceFolder && serviceDocumentOpts.output) {
-    const paths = {
-      schema: path.join(serviceDocumentOpts.sourceFolder, "./src/schema.json"),
-      package: path.join(serviceDocumentOpts.sourceFolder, "./package.json"),
-      changelog: existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md")) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined
+    if (bundle) {
+      let temp = createBundleObj(serviceDocumentOpts.sourceFolder);
+      for (let def in temp) pathsObj[def] = { schema: temp[def].definition, package: temp[def].package, changelog: temp[def].changelog };
+    } else {
+      pathsObj['CurrentService'] = {
+        schema: path.join(serviceDocumentOpts.sourceFolder, "./src/schema.json"),
+        package: path.join(serviceDocumentOpts.sourceFolder, "./package.json"),
+        changelog: existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md")) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined
+      }
     }
-    service.renderHTML(paths.schema, paths.package, paths.changelog).then(data => {
-        data.pipe(vfs.dest(serviceDocumentOpts.output));
-        Logger.success("Documented scuccessfully")
+    service.renderHTML(pathsObj, bundle, packageInfo).then(data => {
+      data.pipe(vfs.dest(serviceDocumentOpts.output));
+      Logger.success("Documented scuccessfully")
     });//.catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
-    // check if we are watching
-    if (serviceDocumentOpts.watch) {
-      watch.createMonitor(path.join(serviceDocumentOpts.sourceFolder, "./"), (monitor) => {
-        monitor.files[paths.schema, paths.changelog, paths.package]
-        Logger.info(`Watching ${serviceDocumentOpts.sourceFolder}`);
-        monitor.on("changed", (where) => {
-          // Handle file changes
-          Logger.info(`Change detected in ${where}.`);
-          service.renderMarkdown(paths.schema, paths.package, paths.changelog)
-            .then(data => {
+    for (let x in pathsObj) {
+      // check if we are watching
+      if (serviceDocumentOpts.watch) {
+        watch.createMonitor(path.join(serviceDocumentOpts.sourceFolder, "./"), (monitor) => {
+          monitor.files[pathsObj[x].schema, pathsObj[x].changelog, pathsObj[x].package]
+          Logger.info(`Watching ${serviceDocumentOpts.sourceFolder}`);
+          monitor.on("changed", (where) => {
+            // Handle file changes
+            Logger.info(`Change detected in ${where}.`);
+            service.renderMarkdown(pathsObj[x].schema, pathsObj[x].package, pathsObj[x].changelog).then(data => {
               data.pipe(vfs.dest(serviceDocumentOpts.output));
-              Logger.success("Documented scuccessfully")
-            })
-            .catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
-        });
-      })
+              Logger.success("Documented scuccessfully");
+            }).catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
+          });
+        })
+      }
     }
   } else {
     Logger.error("One or more parameter missing");
@@ -217,45 +221,52 @@ function optionValidate(serviceArgv, bundle) {
     { name: 'sourceFolder', alias: 's', type: String },
     { name: 'watch', alias: 'w', type: Boolean }
   ], { argv: serviceArgv });
-  let urlArray = {};
+  let pathObjs = {};
   if (serviceValidateOpts.sourceFolder) {
     if (bundle) {
-      let temp = createBundle(serviceValidateOpts.sourceFolder)
-      for (let def in temp) urlArray[def] = temp[def].definition;
+      let temp = createBundleObj(serviceValidateOpts.sourceFolder)
+      for (let def in temp) pathObjs[def] = temp[def].definition;
     } else {
-      urlArray['Current Service'] = path.join(serviceValidateOpts.sourceFolder, "./src/schema.json");
+      pathObjs['CurrentService'] = path.join(serviceValidateOpts.sourceFolder, "./src/schema.json");
     }
-    for (let url in urlArray) {
-      service.validate(urlArray[url]).then(data => Logger.success("Schema valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+    for (let url in pathObjs) {
+      service.validate(pathObjs[url]).then(data => Logger.success("Schema valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
       // check if we are watching
       if (serviceValidateOpts.watch) {
         watch.createMonitor(path.join(serviceValidateOpts.sourceFolder, "./"), (monitor) => {
-          monitor.files[urlArray[url]]
+          monitor.files[pathObjs[url]]
           Logger.info(`Watching ${serviceValidateOpts.sourceFolder}`);
           monitor.on("changed", (where) => {
             // Handle file changes
             Logger.info(`Change detected in ${where}.`);
-            service.validate(urlArray[url]).then(data => Logger.success("Schema valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+            service.validate(pathObjs[url]).then(data => Logger.success("Schema valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
           });
         })
       }
     }
-
   } else {
     Logger.error("One or more parameter missing");
     console.log("Usage: $ rsi service validate --sourceFolder <pathToServiceFolder>");
   }
 }
 
-//
-function createBundle(paths) {
-  for (let def in JSON.parse(fs.readFileSync(path.join(paths, "./package.json"), 'utf-8')).dependencies) {
+//Gets the path ways to the schema and package files for the dependencies
+function createBundleObj(paths) {
+  const dependencies = JSON.parse(fs.readFileSync(path.join(paths, "./package.json"), 'utf-8')).dependencies;
+  for (let def of filterDependencies(dependencies) ) {
     bundleDepenencies[def] = { 
       // definition: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/src/schema.json'), "utf-8")), 
       // package: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/package.json'), "utf-8"))
       definition: path.join(paths, `/node_modules/${def}/src/schema.json`), 
-      package: path.join(paths, `/node_modules/${def}/package.json`) 
+      package: path.join(paths, `/node_modules/${def}/package.json`),
+      changelog: path.join(paths, `/node_modules/${def}/CHANGELOG.md`),
     };
   }
   return bundleDepenencies;
+}
+export function filterDependencies(obj) {
+  const keys = Object.keys(obj).filter(dep => {
+    return dep.match(SERVICE_NAME_REGEX);
+  });
+  return keys;
 }

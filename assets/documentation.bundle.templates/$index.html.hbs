@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+
+
+  <link rel="stylesheet" href="styles/bootstrap.3.3.5.min.css">
+  <link rel="stylesheet" href="styles/doc.css">
+  <link rel="stylesheet" href="styles/hljs_monokai_sublime.min.css">
+
+  <script src="js/jquery.1.8.0.min.js"></script>
+
+<head>
+<body>
+  <div class="sidebar-container">
+    {{#each this.schema}}
+      <div class="sidebar-logo">
+        {{meta.name}}
+        (v{{meta.version}})
+      </div>
+      <ul class="sidebar-navigation">
+        <li class="header">General</li>
+        <li>
+          <a href="#General">info</a>
+        </li>
+        <li>
+            <a href="#Changelog">Changelog</a>
+        </li>
+        <li class="header">Objects</li>
+        {{#each spec.resources}}
+        {{!-- iterate over all resources --}}
+        <li>
+          <a href="#{{@key}}Object">
+            {{extractServiceName ../meta.name}}.{{@key}}Object</a>
+        </li>
+        {{/each}}
+        <li class="header">Types</li>
+        {{#each spec.types}}
+        {{!-- iterate over all types --}}
+        <li>
+          <a href="#{{@key}}Type">
+            {{extractServiceName ../meta.name}}.{{@key}}Type
+          </a>
+        </li>
+        {{/each}}
+      </ul>
+    {{/each}}
+    <div id="rsilogo">
+      &nbsp;<br>
+      by Patrick Bartsch © 2019
+    </div>
+  </div>
+  <div class="content-container">
+    <div class="container-fluid">
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+          <article id="docu">{{{html}}}</article>
+      </div>
+    </div>
+  </div>
+</body>

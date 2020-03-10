@@ -1,0 +1,411 @@
+{{!-- A Hack for windows chromium/chrome to not report the file as contentType:text/html but contentType:text/plain--}}
+&nbsp;
+{{!-- --}}
+
+{{!-- title page --}}
+<h1 style="text-align: center;">RSI Service Documentation</h1>
+<h3 style="text-align: center;"><i>{{packageInfo.name}}</i></h3>
+<p style="text-align: center;">
+  <img src="curlies.png" width="40%">
+</p>
+<p style="text-align: center;">© by Dr. Patrick Bartsch 2019</p>
+<p>&nbsp;</p>
+<p style="text-align: center;">version: {{packageInfo.version}}</p>
+<p>&nbsp;</p>
+{{!-- /title page --}}
+
+{{#each this.schema}}
+  # {{meta.name}}  
+  {{meta.description}}
+
+  ## Table of contents
+
+  * [General information](#General)
+  * [Changelog](#Changelog)
+  * Resources / Object Definitions
+  {{#each spec.resources}}
+    {{!-- iterate over all resources --}}
+    * [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}}Object)
+  {{/each}}
+  * Type Definitions
+  {{#each spec.types}}
+    {{!-- iterate over all types --}}
+    * [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}}Type)
+  {{/each}}
+
+  # <a name="General"></a>General information
+  version: {{meta.version}}
+
+  Repository: {{meta.repository}}
+
+  Author: {{meta.author}}
+
+  {{#if meta.contributers}}
+  Contributors:
+  {{#each meta.contributers}}
+      * {{this}}
+  {{/each}}
+  {{/if}}
+
+
+  ## <a name="Changelog"></a>Changelog
+  ```
+  {{safeString changelog}}
+  ```
+
+  # <a name="Objects"></a>Resources / Object Definitions
+
+  The following section defines the resources available within this service. Resources are collections of `xObjects` and each `Object` has its own `id` and `uri`, so that they can be addressed separately.
+
+  {{#each spec.resources}}
+
+  ## <a name="{{@key}}Object"></a>{{@key}}Object
+
+  {{this.description}}
+
+  ### Attributes
+
+  | name                         | description                                                | type          | format        | unit(s)       | value(s)              |
+  |------------------------------|------------------------------------------------------------|---------------|---------------|---------------|-----------------------|
+  {{!-- iterate over all attributes of objectModel--}}
+  {{#each this.objectModel.attributes}}
+  | {{strech @key 28}} | {{strech this.description 58}} | {{strech this.type 13 }} | {{strech this.format 13}} | {{strech this.unit 13}} | {{getValue this}} |
+  {{/each}}
+
+  ## Resource level access (/{{extractServiceName ../meta.name}}/{{@key}}/)
+
+  {{#each this.accessMethods}}
+  ### {{toUpperCase @key}}
+
+  Use a {{methodToText @key }} on `/{{extractServiceName ../../meta.name}}/{{@ ../key}}/` to {{resourceLevelAction @key }} [{{@ ../key}}Object](#{{@ ../key}}Object)
+
+
+  {{#if this.usesPermissions}}
+  #### Scopes
+
+  To perform a {{methodToText @key }} on this endpoint, the following scope permissions have to be presented with the `access_token`:
+
+  {{#each this.usesPermissions }}
+  * {{this}}
+  {{/each}}
+  {{/if}}
+
+  {{#if this.additionalHeaders}}
+  #### Additional headers
+
+  The following headers might be sent with the request to transport information which are either transient or do not belong th the object payload but are needed to perform the desired state change.
+
+  | header                       | description              | type | mandatory |
+  |------------------------------|--------------------------|------|-----------|
+  {{#each this.additionalHeaders }}
+  | {{@key }} | {{this.description}} | {{this.type}} | {{this.isRequired}} |
+  {{/each}}
+  {{/if}}
+
+  {{#if this.parameters.properties }}
+  #### Parameters
+
+  The following parameters can be used with the request and/or subscriptions:
+
+  | name                         | type          | format         | mandatory |
+  |------------------------------|---------------|----------------|-----------|
+  {{#each this.parameters.properties }}
+  | {{strech @key 28}} | {{strech this.type 13}} | {{strech this.format 13}} | {{isMandatory @key ../parameters.required 9}} |
+  {{/each}}
+  {{/if}}
+
+  #### Example
+
+  {{#ifEqCi @key 'subscribe'}}
+  send to server
+  ```json
+  {
+    "event": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/",
+    "type": "subscribe"
+  }
+  ```
+
+  receive a subscription acknowledgement first
+  ```json
+  {
+    "status": "ok",
+    "event": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/",
+    "type": "subscribe"
+  }
+  ```
+
+  immediately followed by the initial data message representing current state
+  ```json
+  {
+    "status": "ok",
+    "event": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/",
+    "type": "data",
+    "data": [
+      {
+        "id": "3901a278-ba17-44d6-9aef-f7ca67c04840",
+        "name": "lorem ipsum",
+        "uri": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840"
+      },
+      {
+        "id": "8901870-b526-11e3-a5e2-0800200c9a66",
+        "name": "dolor sit",
+        "uri": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/8901870-b526-11e3-a5e2-0800200c9a66"
+      }
+    ]
+  }
+  ```
+  {{/ifEqCi}}
+
+  {{#ifnEqCi @key 'SUBSCRIBE'}}
+  *request*
+
+  ```http
+  {{toUpperCase @key }} /{{extractServiceName ../../../meta.name}}/{{@ ../key}}/ HTTP/1.1
+  Host: rsi.local:1337
+  Connection: keep-alive
+  Accept: application/json
+  Authorization: Bearer <JWT>
+  Accept-Encoding: gzip,deflate
+
+
+  {{#ifEqCi @key 'POST'}}
+  {
+    "rsi": "rockz.."
+  }
+  {{/ifEqCi}}
+  ```
+
+  *response*
+
+  {{#ifEqCi @key 'GET'}}
+  ```http
+  HTTP/1.1 200 OK
+  Content-Type: application/json; charset=utf-8
+  ETag: "-32550834"
+  Content-Encoding: gzip
+  Date: Tue, 07 Apr 1980 00:00:00 GMT
+  Connection: keep-alive
+  Transfer-Encoding: chunked
+
+
+  {
+    "status": "ok",
+    "data": [
+      {
+        "id": "3901a278-ba17-44d6-9aef-f7ca67c04840",
+        "name": "lorem ipsum",
+        "uri": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840"
+      },
+      {
+        "id": "8901870-b526-11e3-a5e2-0800200c9a66",
+        "name": "dolor sit",
+        "uri": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/8901870-b526-11e3-a5e2-0800200c9a66"
+      }
+    ]
+  }
+  ```
+  {{/ifEqCi}}
+
+  {{#ifEqCi @key 'POST'}}
+  ```http
+  HTTP/1.1 201 Created
+  Content-Type: application/json; charset=utf-8
+  ETag: "-32550834"
+  Content-Encoding: gzip
+  Date: Tue, 07 Apr 1980 00:00:00 GMT
+  Connection: keep-alive
+  Transfer-Encoding: chunked
+  Location: /{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840
+
+
+  {
+    "status": "ok"
+  }
+  ```
+  {{/ifEqCi}}
+  {{/ifnEqCi}}
+  {{/each}}
+
+
+  ### Element level access (`/{{extractServiceName ../meta.name}}/{{@key}}/<uuid>`)
+  {{#each this.objectModel.accessMethods}}
+  #### {{toUpperCase @key }}
+
+  {{../model.description}}
+
+  Use a {{methodToText @key }} on `/{{extractServiceName ../../meta.name}}/{{@ ../key}}/<uuid>` to {{elementLevelAction @key }} [{{@ ../key}}Object](#{{@ ../key}}Object)
+
+  {{#if this.usesPermissions}}
+  #### Scopes
+
+  To perform a {{methodToText @key }} on this endpoint, the following scope permissions have to be presented with the `access_token`:
+
+  {{#each this.usesPermissions }}
+  * {{this}}
+  {{/each}}
+
+  {{/if}}
+
+  {{#if this.parameters.properties }}
+  ##### Request parameters
+
+  The following parameters can be used with the request and subscriptions:
+
+  | name                         | type          | mandatory |
+  |------------------------------|---------------|-----------|
+  {{#each this.parameters.properties }}
+  | {{strech @key 28}} | {{strech this.type 13}} | {{isMandatory @key ../required 9}} |
+  {{/each}}
+  {{/if}}
+
+  #### Example
+
+  {{#ifEqCi @key 'subscribe'}}
+  send to server
+  ```json
+  {
+    "event": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840",
+    "type": "subscribe"
+  }
+  ```
+
+  receive a subscription acknowledgement first
+  ```json
+  {
+    "status": "ok",
+    "event": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840",
+    "type": "subscribe"
+  }
+  ```
+
+  immediately followed by the initial data message representing current state
+  ```json
+  {
+    "status": "ok",
+    "event": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840",
+    "type": "data",
+    "data": "data": {
+      "id": "3901a278-ba17-44d6-9aef-f7ca67c04840",
+      "name": "lorem ipsum",
+      "uri": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840"
+    }
+  }
+  ```
+
+  {{/ifEqCi}}
+
+  {{#ifnEqCi @key 'SUBSCRIBE'}}
+  ```http
+  {{toUpperCase @key }} /{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840 HTTP/1.1
+  Host: rsi.local:1337
+  Connection: keep-alive
+  Accept: application/json
+  Authorization: Bearer <JWT>
+  Accept-Encoding: gzip,deflate
+
+
+  {{#ifEqCi @key 'POST'}}
+  {
+    "rsi": "rockz.."
+  }
+  {{/ifEqCi}}
+  ```
+
+
+  {{#ifEqCi @key 'GET'}}
+  ```http
+  HTTP/1.1 200 OK
+  Content-Type: application/json; charset=utf-8
+  ETag: "-32550834"
+  Content-Encoding: gzip
+  Date: Tue, 07 Apr 1980 00:00:00 GMT
+  Connection: keep-alive
+  Transfer-Encoding: chunked
+
+
+  {
+    "status": "ok",
+    "data": {
+        "id": "3901a278-ba17-44d6-9aef-f7ca67c04840",
+        "name": "lorem ipsum",
+        "uri": "/{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840"
+    }
+  }
+  ```
+  {{/ifEqCi}}
+
+  {{#ifEqCi @key 'POST'}}
+  ```http
+  HTTP/1.1 200 OK
+  Content-Type: application/json; charset=utf-8
+  ETag: "-32550834"
+  Content-Encoding: gzip
+  Date: Tue, 07 Apr 1980 00:00:00 GMT
+  Connection: keep-alive
+  Transfer-Encoding: chunked
+
+
+  {
+    "status": "ok"
+  }
+  ```
+  {{/ifEqCi}}
+
+  {{#ifEqCi @key 'DELETE'}}
+  ```http
+  HTTP/1.1 200 OK
+  Content-Type: application/json; charset=utf-8
+  ETag: "-32550834"
+  Content-Encoding: gzip
+  Date: Tue, 07 Apr 1980 00:00:00 GMT
+  Connection: keep-alive
+  Transfer-Encoding: chunked
+
+
+  {
+    "status": "ok"
+  }
+  ```
+  {{/ifEqCi}}
+
+  {{#ifEqCi @key 'PUT'}}
+  ```http
+  HTTP/1.1 201 Created
+  Vary: Accept-Encoding
+  Content-Type: application/json; charset=utf-8
+  ETag: "-32550834"
+  Content-Encoding: gzip
+  Date: Tue, 07 Apr 1980 00:00:00 GMT
+  Connection: keep-alive
+  Transfer-Encoding: chunked
+  Location: /{{extractServiceName ../../../meta.name}}/{{@ ../key}}/3901a278-ba17-44d6-9aef-f7ca67c04840
+
+  {
+    "status": "ok"
+  }
+  ```
+  {{/ifEqCi}}
+  {{/ifnEqCi}}
+  {{/each}}
+
+  {{/each}}
+
+  # Type Definitions
+
+  Types - or nested objects - do not have their own `id` or `uri`. Therefore, they can not be adressed separately and are treated as atomic. Types define the nature of an embedded JSON structure in [Objects][(#Objects).
+
+  {{#each spec.types}}
+
+  ## <a name="{{@key}}Type"></a>{{@key}}Type
+  {{this.description}}
+
+  ### Attributes
+
+  | name                         | description                                                | type          | format        | unit(s)       | value(s)              |
+  |------------------------------|------------------------------------------------------------|---------------|---------------|---------------|-----------------------|
+  {{!-- iterate over all attributes of a type --}}
+  {{#each this.attributes}}
+  | {{strech @key 28}} | {{strech this.description 58}} | {{strech this.type 13 }} | {{strech this.format 13}} | {{strech this.unit 13}} | {{getValue this}} |
+  {{/each}}
+  {{/each}}
+{{/each}}

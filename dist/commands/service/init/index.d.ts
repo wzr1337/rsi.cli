@@ -1,6 +1,5 @@
 /// <reference types="node" />
 import { Readable } from "stream";
-export declare const SERVICE_NAME_REGEX: RegExp;
 export interface serviceMeta {
     description?: String;
     version?: String;
