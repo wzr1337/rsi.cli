@@ -152,8 +152,6 @@ Handlebars.registerHelper('elementLevelAction', function(method) {
   }
 });
 
-
-
 /**
  * load templates
  * @param  {String}   pathToTemplates the template directory (relative)
@@ -189,40 +187,8 @@ export async function compileMD (data: Object, pathToTemplates:string) {
   return Handlebars.compile(serviceOverview)(data);
 }
 
-export async function renderMarkdown(schemaPath:string, packagePath: string, changelogPath?: string):Promise<Readable> {
-// create an returnable ReadStream that is in object mode, because we want to put File objects on it
-const outStream = new Readable({ objectMode: true });
-outStream._read = () => {}; // implemenmts a read() function 
-
-  var schema = {
-    spec: JSON.parse(readFileSync(schemaPath, 'utf-8')),
-    meta: JSON.parse(readFileSync(packagePath, 'utf-8')),
-    changelog: changelogPath ? readFileSync(changelogPath) : undefined
-  };
-
-  // compileMD(schema, ASSESTS_PATH).then( data => {
-  //   // publish schema.json
-  //   outStream.push(new File({
-  //     cwd: '/',
-  //     base: '/',
-  //     path: `/${schema.meta.name || "index"}_${schema.meta.version || "XYZ"}.md`,
-  //     contents: Buffer.from(data ,"utf-8")
-  //   }));
-
-  //   const curlies = new File({
-  //     cwd: '/',
-  //     base: '/',
-  //     path: "/curlies.png",
-  //     contents: readFileSync(path.join(ASSESTS_PATH, "curlies.png"))
-  //   });
-  //   outStream.push(curlies);
-  // });
-  
-  return outStream;
-}
-
-// export async function renderHTML(schemaPath:string, packagePath: string, changelogPath?: string):Promise<Readable> {
-export async function renderHTML(obj: Object, bundle: boolean, packageInfo: Object):Promise<Readable> {
+// export async function renderDoc(schemaPath:string, packagePath: string, changelogPath?: string):Promise<Readable> {
+export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Object, _compileHTML: boolean):Promise<Readable> {
   ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
   marked.setOptions({
     renderer: new marked.Renderer(),
@@ -250,45 +216,55 @@ export async function renderHTML(obj: Object, bundle: boolean, packageInfo: Obje
     });
   }
   compileMD(bundlePackages, ASSESTS_PATH).then( async (data) => {
-    const html = await compileHTML({html: marked(data), ...bundlePackages}, ASSESTS_PATH);
-    outStream.push(new File({
-      cwd: '/',
-      base: '/',
-      path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.html`,
-      contents: Buffer.from(html.replace(new RegExp("<table>", "g"), "<table class=\"table\">") ,"utf-8")
-    }));
+    if (_compileHTML) {
+      const html = await compileHTML({html: marked(data), ...bundlePackages}, ASSESTS_PATH);
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.html`,
+        contents: Buffer.from(html.replace(new RegExp("<table>", "g"), "<table class=\"table\">") ,"utf-8")
+      }));
+      //  css files
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: "/styles/bootstrap.3.3.5.min.css",
+        contents: readFileSync(path.join(ASSESTS_PATH, "styles", "bootstrap.3.3.5.min.css"))
+      }));
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: "/styles/doc.css",
+        contents: readFileSync(path.join(ASSESTS_PATH, "styles", "doc.css"))
+      }));
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: "/styles/hljs_monokai_sublime.min.css",
+        contents: readFileSync(path.join(ASSESTS_PATH, "styles", "hljs_monokai_sublime.min.css"))
+      }));
+      // javascript files
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: "/js/jquery.1.8.0.min.js",
+        contents: readFileSync(path.join(ASSESTS_PATH, "js", "jquery.1.8.0.min.js"))
+      }));
+    } else {
+      // publish schema.json
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.md`,
+        contents: Buffer.from(data ,"utf-8")
+      }));
+    }
     //  image
     outStream.push(new File({
       cwd: '/',
       base: '/',
       path: "/curlies.png",
       contents: readFileSync(path.join(ASSESTS_PATH, "curlies.png"))
-    }));
-    //  css files
-    outStream.push(new File({
-      cwd: '/',
-      base: '/',
-      path: "/styles/bootstrap.3.3.5.min.css",
-      contents: readFileSync(path.join(ASSESTS_PATH, "styles", "bootstrap.3.3.5.min.css"))
-    }));
-    outStream.push(new File({
-      cwd: '/',
-      base: '/',
-      path: "/styles/doc.css",
-      contents: readFileSync(path.join(ASSESTS_PATH, "styles", "doc.css"))
-    }));
-    outStream.push(new File({
-      cwd: '/',
-      base: '/',
-      path: "/styles/hljs_monokai_sublime.min.css",
-      contents: readFileSync(path.join(ASSESTS_PATH, "styles", "hljs_monokai_sublime.min.css"))
-    }));
-    // javascript files
-    outStream.push(new File({
-      cwd: '/',
-      base: '/',
-      path: "/js/jquery.1.8.0.min.js",
-      contents: readFileSync(path.join(ASSESTS_PATH, "js", "jquery.1.8.0.min.js"))
     }));
   });
   return outStream;

@@ -7,6 +7,5 @@ import { Readable } from 'stream';
  * @param  {string}  pathToTemplates path to all templates used to render
  */
 export declare function compileMD(data: Object, pathToTemplates: string): Promise<string>;
-export declare function renderMarkdown(schemaPath: string, packagePath: string, changelogPath?: string): Promise<Readable>;
-export declare function renderHTML(obj: Object, bundle: boolean, packageInfo: Object): Promise<Readable>;
+export declare function renderDoc(obj: Object, bundle: boolean, packageInfo: Object, _compileHTML: boolean): Promise<Readable>;
 export declare function compileHTML(data: any, pathToTemplates: any): Promise<string>;
