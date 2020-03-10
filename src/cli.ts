@@ -34,10 +34,8 @@ if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
       optionRender(serviceArgv, mainOptions.command === 'bundle');
       break;
     case 'markdown':
-      optiondocument(serviceArgv, mainOptions.command === 'bundle', false);
-      break;
     case 'document':
-      optiondocument(serviceArgv, mainOptions.command === 'bundle', true);
+      optiondocument(serviceArgv, mainOptions.command === 'bundle', serviceCommands.command === "document");
       break;
     default:
       service.printHelp();
