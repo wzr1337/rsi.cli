@@ -1,5 +1,7 @@
 /// <reference types="node" />
 import { Readable } from 'stream';
+export declare function toUpperCase(value: string): string;
+export declare function extractServiceName(serviceName: string): string;
 /**
  * renderes markdown from rsi schema
  *

@@ -1,5 +1,6 @@
 import { init as initService, serviceMeta } from "..";
 import { isArray, isObject } from "util";
+import * as path from "path";
 
 export interface PackageJSON {
   name: String,
@@ -27,8 +28,8 @@ describe("service command init", function() {
         generatedPaths.push(data.path);
       })
       .on("end", () => {  // finished
-        for (const path of expectedPaths) {
-          expect(generatedPaths).toContain(path);
+        for (const expectedPath of expectedPaths) {
+          expect(generatedPaths).toContain(path.normalize(expectedPath.toString()));
         }
       });
   });

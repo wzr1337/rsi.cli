@@ -1,6 +1,7 @@
 import { loadTemplates, getSampleSchema, propertyCompare, render, parseSchemas } from ".";
 import * as path from "path";
 import { Stream } from "stream";
+import { debug } from "util";
 
 
 describe("service command init", function() {
@@ -51,17 +52,12 @@ describe("service command init", function() {
     }
   });
 
-  it("should fail parsing a on existing schema", async () => {
-    try {
-      await parseSchemas("");
-      expect(true).toBeFalsy();
-    } catch (error) {
-      expect(error.message).toBe("Can not parse schema from !")
-    }
+  it("should fail parsing none existing schema", async () => {
+    await expect(parseSchemas({})).rejects.toThrowError('passed empty service definition(s)');
   });
 
   it("should parse an existing schema", async () => {
-    const schema = await parseSchemas("src/__mocks__/dummyschema.json");
+    const schema = await parseSchemas({ dummySchema: "src/__mocks__/dummyschema.json"});
     expect(schema.namespaces).toBeDefined();
     expect(Array.isArray(schema.namespaces)).toBeTruthy();
     expect(schema.namespaces[0].classes).toBeDefined();

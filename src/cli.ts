@@ -226,7 +226,7 @@ function optionValidate(serviceArgv, bundle) {
 //Gets the path ways to the schema and package files for the dependencies
 function createBundleObj(paths) {
   const dependencies = JSON.parse(fs.readFileSync(path.join(paths, "./package.json"), 'utf-8')).dependencies;
-  for (let def of filterDependencies(dependencies) ) {
+  for (let def of filterDependencies(dependencies)) {
     bundleDepenencies[def] = { 
       // definition: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/src/schema.json'), "utf-8")), 
       // package: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/package.json'), "utf-8"))
@@ -240,8 +240,16 @@ function createBundleObj(paths) {
 
 //Checks dependencies are rsi
 export function filterDependencies(obj) {
-  const keys = Object.keys(obj).filter(dep => {
-    return dep.match(SERVICE_NAME_REGEX);
-  });
-  return keys;
+  if (obj !== undefined) {
+    const keys = Object.keys(obj).filter(dep => {
+      return dep.match(SERVICE_NAME_REGEX);
+    });
+    if (keys.length === 0) {
+      throw new Error('no RSI services found in dependencies!');
+    } else {
+      return keys;
+    }
+  } else {
+    throw new Error('undefined argument!');
+  }
 }

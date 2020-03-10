@@ -179,13 +179,14 @@ export async function parseSchemas(serviceDefs: Object):Promise<ISchema> {
   var ret:ISchema = {
     namespaces: []
   };
+  if (Object.keys(serviceDefs).length === 0) throw new Error('passed empty service definition(s)');
   for (const schemaPath in serviceDefs) {
 
     try {
       // check file availablity
       fs.accessSync(serviceDefs[schemaPath], fs.constants.R_OK);
     } catch (error) {
-      throw new Error(`Can not parse schema from ${serviceDefs[schemaPath]}!`);
+      throw new Error(`Can not parse schema from ${serviceDefs[schemaPath] || "undefined"}!`);
     }
 
     // start parsing if no exception was thrown

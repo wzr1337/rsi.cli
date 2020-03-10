@@ -6,21 +6,23 @@ import File from "vinyl";
 import { Logger } from '../../../utils/Logger';
 // Create reference instance
 const marked = require('marked');
+import { SERVICE_NAME_REGEX } from '../../../utils/regex';
 
 let ASSESTS_PATH;
 
 // Handelbars helpers
-function toUpperCase(value: string) {
+export function toUpperCase(value: string) {
   return value.toUpperCase();
 }
 Handlebars.registerHelper('toUpperCase', toUpperCase);
 
-Handlebars.registerHelper('extractServiceName', (serviceName: string /** e.g. rsi.service.something */) => {
-  if (!serviceName) return "_undefined_"
-  const match = serviceName.match(/^rsi.service.(\w+)$/);
-  if (null === match) throw new Error(`service name ${serviceName} does not match the rsi.service.XXXX pattern`)
-  return match[1];
-});
+export function extractServiceName(serviceName: string) {
+    if (!serviceName) return "_undefined_"
+    const match = serviceName.match(SERVICE_NAME_REGEX);
+    if (null === match) throw new Error(`service name ${serviceName} does not match the ${SERVICE_NAME_REGEX} pattern`)
+    return match[1];
+}
+Handlebars.registerHelper('extractServiceName', extractServiceName);
 
 Handlebars.registerHelper('ifEqCi', (a, b, opts) => {
     if(a.toUpperCase() === b.toUpperCase())
@@ -247,8 +249,8 @@ export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Objec
       outStream.push(new File({
         cwd: '/',
         base: '/',
-        path: "/js/jquery.1.8.0.min.js",
-        contents: readFileSync(path.join(ASSESTS_PATH, "js", "jquery.1.8.0.min.js"))
+        path: "/js/vue.js", 
+        contents: readFileSync(path.join(ASSESTS_PATH, "js", "vue.js"))
       }));
     } else {
       // publish schema.json
