@@ -22,7 +22,7 @@ if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
   const serviceArgv = serviceCommands._unknown || [];
   switch (serviceCommands.command) {
     case 'init':
-      optioninitialise(serviceArgv, mainOptions.command === 'bundle');
+      optioninitialise(serviceArgv);
       break;
     case 'validate':
       optionValidate(serviceArgv, mainOptions.command === 'bundle');
@@ -53,7 +53,7 @@ if (mainOptions.command == 'bundle' || mainOptions.command == 'service') {
 }
 
 // initialises a new repository
-function optioninitialise(serviceArgv, bundle) {
+function optioninitialise(serviceArgv) {
   const serviceInitOpts = commandLineArgs([
     { name: 'author', alias: 'a', type: String },
     { name: 'description', alias: 'd', type: String },
@@ -95,7 +95,8 @@ function optiondocument(serviceArgv, bundle, html) {
     { name: 'watch', alias: 'w', type: Boolean }
   ], { argv: serviceArgv });
   let pathsObj = {}
-  let packageInfo = { name: JSON.parse(fs.readFileSync(path.join(serviceDocumentOpts.sourceFolder, "./package.json"), 'utf-8')).name, version: JSON.parse(fs.readFileSync(path.join(serviceDocumentOpts.sourceFolder, "./package.json"), 'utf-8')).version };
+  let packageFile = JSON.parse(fs.readFileSync(path.join(serviceDocumentOpts.sourceFolder, "./package.json"), 'utf-8'));
+  let packageInfo = { name: packageFile.name, version: packageFile.version, description: packageFile.description };
   if (serviceDocumentOpts.sourceFolder && serviceDocumentOpts.output) {
     if (bundle) {
       let temp = createBundleObj(serviceDocumentOpts.sourceFolder);
@@ -104,7 +105,7 @@ function optiondocument(serviceArgv, bundle, html) {
       pathsObj[packageInfo.name] = {
         schema: path.join(serviceDocumentOpts.sourceFolder, "./src/schema.json"),
         package: path.join(serviceDocumentOpts.sourceFolder, "./package.json"),
-        changelog: existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md")) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined
+        changelog: ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md"))) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined)
       }
     }
     service.renderDoc(pathsObj, bundle, packageInfo, html).then(data => {
@@ -230,7 +231,8 @@ function createBundleObj(paths) {
       // package: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/package.json'), "utf-8"))
       definition: path.join(paths, `/node_modules/${def}/src/schema.json`), 
       package: path.join(paths, `/node_modules/${def}/package.json`),
-      changelog: path.join(paths, `/node_modules/${def}/CHANGELOG.md`),
+      // changelog: path.join(paths, `/node_modules/${def}/CHANGELOG.md`)
+      changelog: ((existsSync(path.join(paths, `/node_modules/${def}/CHANGELOG.md`))) ? path.join(paths, `/node_modules/${def}/CHANGELOG.md`) : undefined)
     };
   }
   return bundleDepenencies;

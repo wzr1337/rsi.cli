@@ -103,7 +103,11 @@ Handlebars.registerHelper('getValue', function(property) {
 });
 
 Handlebars.registerHelper('safeString', function(str) {
-  return new Handlebars.SafeString(str);
+  if (str === undefined) {
+    return "No change log found. Does not exist.";
+  } else {
+    return new Handlebars.SafeString(str);
+  }
 });
 
 Handlebars.registerHelper('resourceLevelAction', function(method) {
@@ -191,85 +195,87 @@ export async function compileMD (data: Object, pathToTemplates:string) {
 
 // export async function renderDoc(schemaPath:string, packagePath: string, changelogPath?: string):Promise<Readable> {
 export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Object, _compileHTML: boolean):Promise<Readable> {
-  ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
-  marked.setOptions({
-    renderer: new marked.Renderer(),
-    highlight: function(code) {
-      return require('highlight.js').highlightAuto(code).value;
-    },
-   // pedantic: false,
-    gfm: true,
-   // breaks: false,
-   // sanitize: false,
-   // smartLists: true,
-   // smartypants: false,
-   // xhtml: false
-  });
-
-  // create an returnable ReadStream that is in object mode, because we want to put File objects on it
-  const outStream = new Readable({ objectMode: true });
-  outStream._read = () => {}; // implemenmts a read() function 
-  let bundlePackages = { packageInfo: packageInfo, schema: []};
-  for (let prop in obj) {
-    bundlePackages.schema.push({
-      spec: JSON.parse(readFileSync(obj[prop].schema, 'utf-8')),
-      meta: JSON.parse(readFileSync(obj[prop].package, 'utf-8')),
-      changelog: obj[prop].changelog ? readFileSync(obj[prop].changelog, "utf-8") : undefined
+  return new Promise<Readable>((resolve, reject) => {
+    ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
+    marked.setOptions({
+      renderer: new marked.Renderer(),
+      highlight: function(code) {
+        return require('highlight.js').highlightAuto(code).value;
+      },
+     // pedantic: false,
+      gfm: true,
+     // breaks: false,
+     // sanitize: false,
+     // smartLists: true,
+     // smartypants: false,
+     // xhtml: false
     });
-  }
-  compileMD(bundlePackages, ASSESTS_PATH).then( async (data) => {
-    if (_compileHTML) {
-      const html = await compileHTML({html: marked(data), ...bundlePackages}, ASSESTS_PATH);
-      outStream.push(new File({
-        cwd: '/',
-        base: '/',
-        path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.html`,
-        contents: Buffer.from(html.replace(new RegExp("<table>", "g"), "<table class=\"table\">") ,"utf-8")
-      }));
-      //  css files
-      outStream.push(new File({
-        cwd: '/',
-        base: '/',
-        path: "/styles/bootstrap.3.3.5.min.css",
-        contents: readFileSync(path.join(ASSESTS_PATH, "styles", "bootstrap.3.3.5.min.css"))
-      }));
-      outStream.push(new File({
-        cwd: '/',
-        base: '/',
-        path: "/styles/doc.css",
-        contents: readFileSync(path.join(ASSESTS_PATH, "styles", "doc.css"))
-      }));
-      outStream.push(new File({
-        cwd: '/',
-        base: '/',
-        path: "/styles/hljs_monokai_sublime.min.css",
-        contents: readFileSync(path.join(ASSESTS_PATH, "styles", "hljs_monokai_sublime.min.css"))
-      }));
-      // javascript files
-      outStream.push(new File({
-        cwd: '/',
-        base: '/',
-        path: "/js/vue.js", 
-        contents: readFileSync(path.join(ASSESTS_PATH, "js", "vue.js"))
-      }));
-    } else {
-      // publish schema.json
-      outStream.push(new File({
-        cwd: '/',
-        base: '/',
-        path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.md`,
-        contents: Buffer.from(data ,"utf-8")
-      }));
+  
+    // create an returnable ReadStream that is in object mode, because we want to put File objects on it
+    const outStream = new Readable({ objectMode: true });
+    outStream._read = () => {}; // implemenmts a read() function 
+    let bundlePackages = { packageInfo: packageInfo, schema: []};
+    for (let prop in obj) {
+      bundlePackages.schema.push({
+        spec: JSON.parse(readFileSync(obj[prop].schema, 'utf-8')),
+        meta: JSON.parse(readFileSync(obj[prop].package, 'utf-8')),
+        changelog: obj[prop].changelog ? readFileSync(obj[prop].changelog, "utf-8") : undefined
+      });
     }
-    //  image
-    outStream.push(new File({
-      cwd: '/',
-      base: '/',
-      path: "/curlies.png",
-      contents: readFileSync(path.join(ASSESTS_PATH, "curlies.png"))
-    }));
-  });
-  return outStream;
+    compileMD(bundlePackages, ASSESTS_PATH).then( async (data) => {
+      if (_compileHTML) {
+        const html = await compileHTML({html: marked(data), ...bundlePackages}, ASSESTS_PATH);
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.html`,
+          contents: Buffer.from(html.replace(new RegExp("<table>", "g"), "<table class=\"table\">") ,"utf-8")
+        }));
+        //  css files
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/styles/bootstrap.3.3.5.min.css",
+          contents: readFileSync(path.join(ASSESTS_PATH, "styles", "bootstrap.3.3.5.min.css"))
+        }));
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/styles/doc.css",
+          contents: readFileSync(path.join(ASSESTS_PATH, "styles", "doc.css"))
+        }));
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/styles/hljs_monokai_sublime.min.css",
+          contents: readFileSync(path.join(ASSESTS_PATH, "styles", "hljs_monokai_sublime.min.css"))
+        }));
+        // javascript files
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/js/vue.js", 
+          contents: readFileSync(path.join(ASSESTS_PATH, "js", "vue.js"))
+        }));
+      } else {
+        // publish schema.json
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: `/${packageInfo['name'] || "index"}_${packageInfo['version'] || "XYZ"}.md`,
+          contents: Buffer.from(data ,"utf-8")
+        }));
+      }
+      //  image
+      outStream.push(new File({
+        cwd: '/',
+        base: '/',
+        path: "/curlies.png",
+        contents: readFileSync(path.join(ASSESTS_PATH, "curlies.png"))
+      }));
+      resolve(outStream);
+    });
+  })
 }
 
 export async function compileHTML(data, pathToTemplates):Promise<string> {

@@ -99,7 +99,8 @@
   background-image: url('../curlies.png');
   background-size: 100px;
   background-repeat: no-repeat;
-  background-position: bottom; 
+  background-position: bottom;
+  bottom: 0; 
 }
 
 .mainContainer {
@@ -119,4 +120,11 @@
 
 .none {
   
+}
+
+.markdownContent {
+  width: 100%;
+  height: auto;
+  border: 1px solid black;
+  box-shadow: 2px 2px 3px 0px black;
 }
