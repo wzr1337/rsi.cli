@@ -1,6 +1,7 @@
 .sidebar-container {
   position: fixed;
-  width: 220px;
+  /* width: 220px; */
+  width: 300px;
   height: 100%;
   left: 0;
   overflow-x: hidden;
@@ -17,6 +18,7 @@
   padding: 10px 15px 10px 30px;
   font-size: 20px;
   background-color: #2574A9;
+  cursor: pointer;
 }
 
 .sidebar-navigation {
@@ -98,4 +100,23 @@
   background-size: 100px;
   background-repeat: no-repeat;
   background-position: bottom; 
+}
+
+.mainContainer {
+  padding-left: 40px;
+}
+
+.menuHeader {
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+  margin-left: -15%;
+}
+.md-list-item:not(.none):hover {
+  background-color: #14A7CC;
+}
+
+.none {
+  
 }

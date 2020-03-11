@@ -1,75 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Document</title>
-
-
-  <link rel="stylesheet" href="styles/bootstrap.3.3.5.min.css">
-  <link rel="stylesheet" href="styles/doc.css">
-  <link rel="stylesheet" href="styles/hljs_monokai_sublime.min.css">
-  <script src="./js/vue.js"></script>
-
-<head>
-<body>
-  <div id="app">
-    <div class="sidebar-container">
-    {{#each this.schema}}
-      <div class="sidebar-logo">
-        {{meta.name}}
-        (v{{meta.version}})
+  <head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles/bootstrap.3.3.5.min.css">
+    <link rel="stylesheet" href="styles/doc.css">
+    <link rel="stylesheet" href="styles/hljs_monokai_sublime.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
+    <script src="./js/vue.js"></script>
+  <head>
+  <body>
+    <div id="app">
+      <div class="sidebar-container">
+        {{#each this.schema}}
+          <md-list style="background-color: #2574A9;">
+            <md-list-item md-expand style="background-color: #2574A9;">
+              <md-icon style="color: white;">folder</md-icon>
+              <span class="md-list-item-text" style="color: white">
+                {{meta.name}}<br>
+                (v{{meta.version}})
+              </span>
+              <md-list slot="md-expand" style="background-color: #2A2A2A;">
+                <md-list-item class="md-inset none"><p class="menuHeader">General</p></md-list-item>
+                <md-list-item class="md-inset" href="#General"><p style="color: white;">Info</p></md-list-item>
+                <md-list-item class="md-inset" href="#Changelog"><p style="color: white;">Changelog</p></md-list-item>
+                <md-list-item class="md-inset none"><p class="menuHeader">Objects</p></md-list-item>
+                {{#each spec.resources}}
+                  <md-list-item class="md-inset" href="#{{@key}}Object"><p style="color: white;">{{extractServiceName ../meta.name}}.{{@key}}Object</p></md-list-item>
+                {{/each}}
+                {{#if spec.types }}
+                  <md-list-item class="md-inset none"><p class="menuHeader">Types</p></md-list-item>
+                {{/if}}
+                {{#each spec.types}}
+                  <md-list-item class="md-inset" href="#{{@key}}Type"><p style="color: white;">{{extractServiceName ../meta.name}}.{{@key}}Type</p>
+                  </md-list-item>
+                {{/each}}
+              </md-list>
+            </md-list-item>
+          </md-list>
+        {{/each}}
+        <div id="rsilogo">
+          &nbsp;<br>
+          by Patrick Bartsch © 2019
+        </div>
       </div>
-      <ul class="sidebar-navigation">
-        <li class="header">General</li>
-        <li>
-          <a href="#General">info</a>
-        </li>
-        <li>
-            <a href="#Changelog">Changelog</a>
-        </li>
-        <li class="header">Objects</li>
-        {{#each spec.resources}}
-        {{!-- iterate over all resources --}}
-        <li>
-          <a href="#{{@key}}Object">
-            {{extractServiceName ../meta.name}}.{{@key}}Object</a>
-        </li>
-        {{/each}}
-        <li class="header">Types</li>
-        {{#each spec.types}}
-        {{!-- iterate over all types --}}
-        <li>
-          <a href="#{{@key}}Type">
-            {{extractServiceName ../meta.name}}.{{@key}}Type
-          </a>
-        </li>
-        {{/each}}
-      </ul>
-    {{/each}}
-    <div id="rsilogo">
-      &nbsp;<br>
-      by Patrick Bartsch © 2019
-    </div>
-  </div>
-  <div class="content-container">
-    <div class="container-fluid">
-      <!-- Main component for a primary marketing message or call to action -->
-      <div class="jumbotron">
-          <article id="docu">{{{html}}}</article>
+      <div class="content-container">
+        <div class="container-fluid mainContainer">
+          <!-- Main component for a primary marketing message or call to action -->
+          <div class="jumbotron">
+              <article id="docu">{{{html}}}</article>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  </div>
+    <script src="https://unpkg.com/vue-material"></script>
+    <script>
+      Vue.use(VueMaterial.default)
 
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-
-      },
-      methods: {
-        
-      }
-    })
-  </script>
-</body>
+      new Vue({
+        el: '#app'
+      })
+    </script>
+  </body>
+</html>
