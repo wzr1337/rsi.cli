@@ -214,13 +214,15 @@ export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Objec
     // create an returnable ReadStream that is in object mode, because we want to put File objects on it
     const outStream = new Readable({ objectMode: true });
     outStream._read = () => {}; // implemenmts a read() function 
-    let bundlePackages = { packageInfo: packageInfo, schema: []};
+    let bundlePackages = { packageInfo: packageInfo, schemas: [], changelog: ((obj['changelog']) ? readFileSync(obj['changelog'], "utf-8") : undefined) };
     for (let prop in obj) {
-      bundlePackages.schema.push({
-        spec: JSON.parse(readFileSync(obj[prop].schema, 'utf-8')),
-        meta: JSON.parse(readFileSync(obj[prop].package, 'utf-8')),
-        changelog: obj[prop].changelog ? readFileSync(obj[prop].changelog, "utf-8") : undefined
-      });
+      if (prop !== 'changelog') {
+        bundlePackages.schemas.push({
+          spec: JSON.parse(readFileSync(obj[prop].schema, 'utf-8')),
+          meta: JSON.parse(readFileSync(obj[prop].package, 'utf-8')),
+          changelog: obj[prop].changelog ? readFileSync(obj[prop].changelog, "utf-8") : undefined
+        });
+      }
     }
     compileMD(bundlePackages, ASSESTS_PATH).then( async (data) => {
       if (_compileHTML) {

@@ -100,6 +100,7 @@ function optiondocument(serviceArgv, bundle, html) {
   if (serviceDocumentOpts.sourceFolder && serviceDocumentOpts.output) {
     if (bundle) {
       let temp = createBundleObj(serviceDocumentOpts.sourceFolder);
+      pathsObj['changelog'] = ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md"))) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined);
       for (let def in temp) pathsObj[def] = { schema: temp[def].definition, package: temp[def].package, changelog: temp[def].changelog };
     } else {
       pathsObj[packageInfo.name] = {

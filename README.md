@@ -40,6 +40,7 @@ Usage: `rsi <commands...> [options...]`
   | command                       | what it does                                                    |
   | ----------------------------- | --------------------------------------------------------------- |
   | [service](#service)           | operate on service level                                        |
+  | bundle                        | operate on service bundle level                                 |
 
 ### <a name="service"></a>service
 
