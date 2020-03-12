@@ -24,8 +24,8 @@
               </span>
               <md-list slot="md-expand" style="background-color: #2A2A2A;">
                 <md-list-item class="md-inset none"><p class="menuHeader">General</p></md-list-item>
-                <md-list-item class="md-inset" href="#General"><p style="color: white;">Info</p></md-list-item>
-                <md-list-item class="md-inset" href="#Changelog"><p style="color: white;">Changelog</p></md-list-item>
+                <md-list-item class="md-inset" href="#{{meta.name}}"><p style="color: white;">Info</p></md-list-item>
+                <md-list-item class="md-inset" href="#{{meta.name}}Changelog"><p style="color: white;">Changelog</p></md-list-item>
                 <md-list-item class="md-inset none"><p class="menuHeader">Objects</p></md-list-item>
                 {{#each spec.resources}}
                   <md-list-item class="md-inset" href="#{{@key}}Object"><p style="color: white;">{{extractServiceName ../meta.name}}.{{@key}}Object</p></md-list-item>
