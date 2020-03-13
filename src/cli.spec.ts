@@ -8,7 +8,7 @@ describe("this cli", () => {
   it("should throw an error", () => {
     expect(() => {
       cli.filterDependencies({ 'fooBar': 'http://somewhere.com'});
-    }).toThrowError('no RSI services found in dependencies!');
+    }).toThrowError('no RSI or VIWI services found in dependencies!');
     expect(() => {
       cli.filterDependencies(undefined);
     }).toThrowError('undefined argument!')

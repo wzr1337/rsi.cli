@@ -40,7 +40,7 @@ Usage: `rsi <commands...> [options...]`
   | command                       | what it does                                                    |
   | ----------------------------- | --------------------------------------------------------------- |
   | [service](#service)           | operate on service level                                        |
-  | bundle                        | operate on service bundle level                                 |
+  | [bundle](#bundle)             | operate on service bundle level                                 |
 
 ### <a name="service"></a>service
 
@@ -61,15 +61,33 @@ Usage: `rsi <commands...> [options...]`
   | [markdown](#service.markdown) | render markdown documentation based on the schema               |
   | [validate](#service.validate) | validate a schema                                               |
 
+  ### <a name="bundle"></a>bundle
+
+  Usage:
+  
+  `$ rsi bundle`
+
+  prints you a list of available commands on service level.
+
+**commands**
+
+  | command                       | what it does                                                    |
+  | ----------------------------- | --------------------------------------------------------------- |
+  | [document](#service.document) | render HTML documentation based on the schemas in the bundle    |
+  | [render](#service.render)     | render bundle UML                                               |
+  | [markdown](#service.markdown) | render markdown documentation based for bundle                  |
+  | [validate](#service.validate) | validate a schemas in bundle                                    |
+
+
 #### <a name="service.document"></a>document
 
   Usage:
   
-  `$ rsi service document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
+  `$ rsi <service||bundle> document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
 
   or
 
-  `$ rsi service document -s <pathToServiceFolder> -o <pathToOutputFolder>`
+  `$ rsi <service||bundle> document -s <pathToServiceFolder> -o <pathToOutputFolder>`
   
   Renders a set of HTML documents out of the schema.json file contained in `<pathToServiceFolder>` into `<pathToOutputFolder>`.
 
@@ -124,11 +142,11 @@ Usage: `rsi <commands...> [options...]`
 
   Usage:
   
-  `$ rsi service render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
+  `$ rsi <service||bundle> render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
 
   or
 
-  `$ rsi service render -s <pathToServiceFolder> -o <pathToOutputFolder>`
+  `$ rsi <service||bundle> render -s <pathToServiceFolder> -o <pathToOutputFolder>`
   
   Renders a class diagram (plantuml) out of the schema.json file contained in `<pathToServiceFolder>` into `<pathToOutputFolder>`.
 
@@ -144,11 +162,11 @@ Usage: `rsi <commands...> [options...]`
 
   Usage:
   
-  `$ rsi service markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
+  `$ rsi <service||bundle> markdown --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`
 
   or
 
-  `$ rsi service markdown -s <pathToServiceFolder> -o <pathToOutputFolder>`
+  `$ rsi <service||bundle> markdown -s <pathToServiceFolder> -o <pathToOutputFolder>`
   
   Renders a markdown document out of the schema.json file contained in `<pathToServiceFolder>` into `<pathToOutputFolder>`.
 
@@ -164,11 +182,11 @@ Usage: `rsi <commands...> [options...]`
 
   Usage:
   
-  `$ rsi service validate --sourceFolder <pathToServiceFolder>`
+  `$ rsi <service||bundle> validate --sourceFolder <pathToServiceFolder>`
 
   or
 
-  `$ rsi service validate -s <pathToServiceFolder>`
+  `$ rsi <service||bundle> validate -s <pathToServiceFolder>`
   
   Validates schema.json file contained in `<pathToServiceFolder>`.
 

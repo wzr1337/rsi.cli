@@ -94,7 +94,7 @@ function optiondocument(serviceArgv, bundle, html) {
     { name: 'output', alias: 'o', type: String },
     { name: 'watch', alias: 'w', type: Boolean }
   ], { argv: serviceArgv });
-  let pathsObj = {}
+  let pathsObj = {};
   let packageFile = JSON.parse(fs.readFileSync(path.join(serviceDocumentOpts.sourceFolder, "./package.json"), 'utf-8'));
   let packageInfo = { name: packageFile.name, version: packageFile.version, description: packageFile.description };
   if (serviceDocumentOpts.sourceFolder && serviceDocumentOpts.output) {
@@ -246,7 +246,7 @@ export function filterDependencies(obj) {
       return dep.match(SERVICE_NAME_REGEX);
     });
     if (keys.length === 0) {
-      throw new Error('no RSI services found in dependencies!');
+      throw new Error('no RSI or VIWI services found in dependencies!');
     } else {
       return keys;
     }
