@@ -32,7 +32,6 @@ export interface serviceMeta {
  * @param opts [serviceMeta] the initialization configuration
  */
 export function init(opts:serviceMeta):Readable {
-  console.log('I HAVE BEEN TRIGGERED!');
   // create an returnable ReadStream that is in object mode, because we want to put File objects on it
   const outStream = new Readable({ objectMode: true });
   outStream._read = () => {}; // implemenmts a read() function

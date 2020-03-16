@@ -164,7 +164,7 @@ Handlebars.registerHelper('elementLevelAction', function(method) {
  * @param  {Function} cb  callback function (error, template literal)
  * @private
  */
-const loadTemplates = async function(pathToTemplates):Promise<{}> {
+export async function loadTemplates(pathToTemplates):Promise<{}> {
   const names = readdirSync(pathToTemplates);
   var files = names.map((it) => { return path.join(pathToTemplates, it)} );
   let tmpls = {};
@@ -276,7 +276,7 @@ export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Objec
         contents: readFileSync(path.join(ASSESTS_PATH, "curlies.png"))
       }));
       resolve(outStream);
-    });
+    })
   })
 }
 
