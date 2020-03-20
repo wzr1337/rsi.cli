@@ -42,7 +42,7 @@ export function init(opts:serviceMeta):Readable {
   const name = (null !== opts.name.match(SERVICE_NAME_REGEX)) ? opts.name.match(SERVICE_NAME_REGEX)[1] : opts.name;
   if (!opts.author) throw new Error("missing author name in `author` property.");
   if (!opts.email) throw new Error("missing author email in `email` property.");
-  const author = `${opts.author} <${opts.email}>`;
+  const author = {name: opts.author, email: opts.email};
 
   // render package.json
   var template = Handlebars.compile(
