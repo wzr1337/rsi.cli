@@ -252,12 +252,36 @@ export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Objec
           path: "/styles/hljs_monokai_sublime.min.css",
           contents: readFileSync(path.join(ASSESTS_PATH, "styles", "hljs_monokai_sublime.min.css"))
         }));
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/styles/vueFont.css",
+          contents: readFileSync(path.join(ASSESTS_PATH, "styles", "vueFont.css"))
+        }));
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/styles/vueMat.css",
+          contents: readFileSync(path.join(ASSESTS_PATH, "styles", "vueMat.css"))
+        }));
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/styles/vueTheme.css",
+          contents: readFileSync(path.join(ASSESTS_PATH, "styles", "vueTheme.css"))
+        }));
         // javascript files
         outStream.push(new File({
           cwd: '/',
           base: '/',
           path: "/js/vue.js", 
           contents: readFileSync(path.join(ASSESTS_PATH, "js", "vue.js"))
+        }));
+        outStream.push(new File({
+          cwd: '/',
+          base: '/',
+          path: "/js/vueMat.js", 
+          contents: readFileSync(path.join(ASSESTS_PATH, "js", "vueMat.js"))
         }));
       } else {
         // publish schema.json
