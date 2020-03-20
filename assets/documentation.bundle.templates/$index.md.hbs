@@ -17,23 +17,23 @@
 ## Table of contents
 * [Description](#descrip)
 * General Information
-{{#each this.schemas}}
+{{#each this.serviceDefinitions}}
   * [{{meta.name}}](#{{meta.name}})
 {{/each}}
 * Change Logs
   * [Bundle](#Changelog)
-{{#each this.schemas}}
+{{#each this.serviceDefinitions}}
   * [{{meta.name}}](#{{meta.name}}Changelog)
 {{/each}}
 * Resources / Object Definitions
-{{#each this.schemas}}
+{{#each this.serviceDefinitions}}
   {{#each this.spec.resources}}
   {{!-- iterate over all resources --}}
     * [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}}Object)
   {{/each}}
 {{/each}}
 * Type Definitions
-{{#each this.schemas}}
+{{#each this.serviceDefinitions}}
   {{#each this.spec.types}}
     {{!-- iterate over all types --}}
     * [/{{extractServiceName ../meta.name}}/{{@key}}](#{{@key}}Type)
@@ -50,7 +50,7 @@
 
 <div style="width: 100%; height: 1px; border: 1px solid black"></div>
 
-{{#each this.schemas}}
+{{#each this.serviceDefinitions}}
   # <a name="{{meta.name}}"></a>{{meta.name}}
   {{meta.description}}
 

@@ -101,10 +101,10 @@ function optiondocument(serviceArgv, bundle, html) {
     if (bundle) {
       let temp = createBundleObj(serviceDocumentOpts.sourceFolder);
       pathsObj['changelog'] = ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md"))) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined);
-      for (let def in temp) pathsObj[def] = { schema: temp[def].definition, package: temp[def].package, changelog: temp[def].changelog };
+      for (let def in temp) pathsObj[def] = { serviceDefinition: temp[def].definition, package: temp[def].package, changelog: temp[def].changelog };
     } else {
       pathsObj[packageInfo.name] = {
-        schema: path.join(serviceDocumentOpts.sourceFolder, "./src/schema.json"),
+        serviceDefinition: path.join(serviceDocumentOpts.sourceFolder, "./src/serviceDefinition.json"),
         package: path.join(serviceDocumentOpts.sourceFolder, "./package.json"),
         changelog: ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md"))) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined)
       }
@@ -117,7 +117,7 @@ function optiondocument(serviceArgv, bundle, html) {
       // check if we are watching
       if (serviceDocumentOpts.watch) {
         watch.createMonitor(path.join(serviceDocumentOpts.sourceFolder, "./"), (monitor) => {
-          monitor.files[pathsObj[x].schema, pathsObj[x].changelog, pathsObj[x].package]
+          monitor.files[pathsObj[x].serviceDefinition, pathsObj[x].changelog, pathsObj[x].package]
           Logger.info(`Watching ${serviceDocumentOpts.sourceFolder}`);
           monitor.on("changed", (where) => {
             // Handle file changes
@@ -154,7 +154,7 @@ function optionRender(serviceArgv, bundle) {
       let temp = createBundleObj(serviceRenderOpts.sourceFolder)
       for (let def in temp) pathObjs[def] = temp[def].definition;
     } else {
-      pathObjs[JSON.parse(fs.readFileSync(path.join(serviceRenderOpts.sourceFolder, "./package.json"), 'utf-8')).name] = path.join(serviceRenderOpts.sourceFolder, "./src/schema.json");
+      pathObjs[JSON.parse(fs.readFileSync(path.join(serviceRenderOpts.sourceFolder, "./package.json"), 'utf-8')).name] = path.join(serviceRenderOpts.sourceFolder, "./src/serviceDefinition.json");
     }
     // const paths = { schema: path.join(serviceRenderOpts.sourceFolder, "./src/schema.json") }
     // render once 
@@ -168,12 +168,12 @@ function optionRender(serviceArgv, bundle) {
       // check if we are watching
       if (serviceRenderOpts.watch) {
         watch.createMonitor(path.join(serviceRenderOpts.sourceFolder, "./"), (monitor) => {
-          monitor.files[pathObjs[x].schema]
+          monitor.files[pathObjs[x].serviceDefinition]
           Logger.info(`Watching ${serviceRenderOpts.sourceFolder}`);
           monitor.on("changed", (where) => {
             // Handle file changes
             Logger.info(`Change detected in ${where}.`);
-            service.parseSchemas([pathObjs[x].schema]).then(payload => {
+            service.parseSchemas([pathObjs[x].serviceDefinition]).then(payload => {
               service.render(payload).then(data => {
                 data.pipe(vfs.dest(serviceRenderOpts.output)).on("data", (data) => Logger.success(`Rendered plantuml to ${path.join(serviceRenderOpts.output, data.basename)}.`));
               }).catch(err => Logger.error("Rendering failed:", JSON.stringify(err, undefined, 2)));
@@ -200,10 +200,10 @@ function optionValidate(serviceArgv, bundle) {
       let temp = createBundleObj(serviceValidateOpts.sourceFolder)
       for (let def in temp) pathObjs[def] = temp[def].definition;
     } else {
-      pathObjs['CurrentService'] = path.join(serviceValidateOpts.sourceFolder, "./src/schema.json");
+      pathObjs['CurrentService'] = path.join(serviceValidateOpts.sourceFolder, "./src/serviceDefinition.json");
     }
     for (let url in pathObjs) {
-      service.validate(pathObjs[url]).then(data => Logger.success("Schema valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+      service.validate(pathObjs[url]).then(data => Logger.success("Service Definition valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
       // check if we are watching
       if (serviceValidateOpts.watch) {
         watch.createMonitor(path.join(serviceValidateOpts.sourceFolder, "./"), (monitor) => {
@@ -212,7 +212,7 @@ function optionValidate(serviceArgv, bundle) {
           monitor.on("changed", (where) => {
             // Handle file changes
             Logger.info(`Change detected in ${where}.`);
-            service.validate(pathObjs[url]).then(data => Logger.success("Schema valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
+            service.validate(pathObjs[url]).then(data => Logger.success("Service Definition valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
           });
         })
       }
@@ -230,7 +230,7 @@ function createBundleObj(paths) {
     bundleDepenencies[def] = { 
       // definition: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/src/schema.json'), "utf-8")), 
       // package: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/package.json'), "utf-8"))
-      definition: path.join(paths, `/node_modules/${def}/src/schema.json`), 
+      definition: path.join(paths, `/node_modules/${def}/src/serviceDefinition.json`), 
       package: path.join(paths, `/node_modules/${def}/package.json`),
       // changelog: path.join(paths, `/node_modules/${def}/CHANGELOG.md`)
       changelog: ((existsSync(path.join(paths, `/node_modules/${def}/CHANGELOG.md`))) ? path.join(paths, `/node_modules/${def}/CHANGELOG.md`) : undefined)

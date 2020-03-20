@@ -52,7 +52,7 @@ describe("service.document", () => {
     expect(documentIndex.renderDoc({
       changelog: undefined, 
       'rsi.service.identity': { 
-        schema: 'node_modules\\rsi.service.identity\\src\\schema.json',
+        serviceDefinition: 'node_modules\\rsi.service.identity\\src\\schema.json',
         package: 'node_modules\\rsi.service.identity\\package.json',
         changelog: 'node_modules\\rsi.service.identity\\CHANGELOG.md'}
       }, false, {name: 'package name', version: "0.0.1", description: "I am a paackage description"}, false)).resolves

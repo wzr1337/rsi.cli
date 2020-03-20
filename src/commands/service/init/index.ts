@@ -76,7 +76,7 @@ export function init(opts:serviceMeta):Readable {
   outStream.push(new File({
     cwd: '/',
     base: '/',
-    path: '/src/schema.json',
+    path: '/src/serviceDefinition.json',
     contents: Buffer.from(template({
       name: name,
       description: description
