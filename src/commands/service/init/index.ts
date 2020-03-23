@@ -42,7 +42,8 @@ export function init(opts:serviceMeta):Readable {
   const name = (null !== opts.name.match(SERVICE_NAME_REGEX)) ? opts.name.match(SERVICE_NAME_REGEX)[1] : opts.name;
   if (!opts.author) throw new Error("missing author name in `author` property.");
   if (!opts.email) throw new Error("missing author email in `email` property.");
-  const author = {name: opts.author, email: opts.email};
+  // const author = { name: opts.author, email: opts.email };
+  const author = opts.author;
 
   // render package.json
   var template = Handlebars.compile(
@@ -54,7 +55,8 @@ export function init(opts:serviceMeta):Readable {
     path: '/package.json',
     contents: Buffer.from(template({
       name: name,
-      author: author,
+      author: opts.author,
+      email: opts.email,
       description: description,
       version: version
     }),"utf-8")

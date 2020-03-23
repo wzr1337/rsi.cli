@@ -3,7 +3,10 @@
   "version": "{{version}}",
   "description": "{{description}}",
   "files": ["src/schema.json"],
-  "author": "{{{author}}}",
+  "author": {
+    "name": "{{{author}}}",
+    "email": "{{email}}"
+  },
   "contributors": [
   ],
   "scripts": {
