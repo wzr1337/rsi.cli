@@ -2,7 +2,7 @@
   "name": "rsi.service.{{name}}",
   "version": "{{version}}",
   "description": "{{description}}",
-  "files": ["src/schema.json"],
+  "files": ["src/serviceDefinition.json"],
   "author": {
     "name": "{{{author}}}",
     "email": "{{email}}"
