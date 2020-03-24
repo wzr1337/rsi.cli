@@ -70,9 +70,9 @@ export function init(opts:serviceMeta):Readable {
     contents: fs.readFileSync(path.join(__dirname, "../../../../assets/repo.template/.gitignore"))
   }));
 
-  // render schema.json
+  // render serviceDefinition.json
   var template = Handlebars.compile(
-    fs.readFileSync(path.join(__dirname, "../../../../assets/repo.template/src/schema.json"), "utf-8")
+    fs.readFileSync(path.join(__dirname, "../../../../assets/repo.template/src/serviceDefinition.json"), "utf-8")
     );
   // publish schema.json
   outStream.push(new File({
