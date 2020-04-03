@@ -104,7 +104,7 @@ function optiondocument(serviceArgv, bundle, html) {
       for (let def in temp) pathsObj[def] = { serviceDefinition: temp[def].definition, package: temp[def].package, changelog: temp[def].changelog };
     } else {
       pathsObj[packageInfo.name] = {
-        serviceDefinition: path.join(serviceDocumentOpts.sourceFolder, "./src/serviceDefinition.json"),
+        serviceDefinition: ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./src/serviceDefinition.json"))) ? path.join(serviceDocumentOpts.sourceFolder, "./src/serviceDefinition.json") : path.join(serviceDocumentOpts.sourceFolder, "./src/schema.json")),
         package: path.join(serviceDocumentOpts.sourceFolder, "./package.json"),
         changelog: ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md"))) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined)
       }
@@ -154,7 +154,7 @@ function optionRender(serviceArgv, bundle) {
       let temp = createBundleObj(serviceRenderOpts.sourceFolder)
       for (let def in temp) pathObjs[def] = temp[def].definition;
     } else {
-      pathObjs[JSON.parse(fs.readFileSync(path.join(serviceRenderOpts.sourceFolder, "./package.json"), 'utf-8')).name] = path.join(serviceRenderOpts.sourceFolder, "./src/serviceDefinition.json");
+      pathObjs[JSON.parse(fs.readFileSync(path.join(serviceRenderOpts.sourceFolder, "./package.json"), 'utf-8')).name] = ((existsSync(path.join(serviceRenderOpts.sourceFolder, "./src/serviceDefinition.json"))) ? path.join(serviceRenderOpts.sourceFolder, "./src/serviceDefinition.json") : path.join(serviceRenderOpts.sourceFolder, "./src/schema.json"));
     }
     // const paths = { schema: path.join(serviceRenderOpts.sourceFolder, "./src/schema.json") }
     // render once 
@@ -200,7 +200,7 @@ function optionValidate(serviceArgv, bundle) {
       let temp = createBundleObj(serviceValidateOpts.sourceFolder)
       for (let def in temp) pathObjs[def] = temp[def].definition;
     } else {
-      pathObjs['CurrentService'] = path.join(serviceValidateOpts.sourceFolder, "./src/serviceDefinition.json");
+      pathObjs['CurrentService'] = ((existsSync(path.join(serviceValidateOpts.sourceFolder, "./src/serviceDefinition.json"))) ? path.join(serviceValidateOpts.sourceFolder, "./src/serviceDefinition.json") : path.join(serviceValidateOpts.sourceFolder, "./src/schema.json"));
     }
     for (let url in pathObjs) {
       service.validate(pathObjs[url]).then(data => Logger.success("Service Definition valid - " + url)).catch(err => Logger.error("Validation failed:", JSON.stringify(err, undefined, 2)));
@@ -227,10 +227,10 @@ function optionValidate(serviceArgv, bundle) {
 function createBundleObj(paths) {
   const dependencies = JSON.parse(fs.readFileSync(path.join(paths, "./package.json"), 'utf-8')).dependencies;
   for (let def of filterDependencies(dependencies)) {
-    bundleDepenencies[def] = { 
+    bundleDepenencies[def] = {
       // definition: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/src/schema.json'), "utf-8")), 
       // package: JSON.parse(fs.readFileSync(path.join(serviceValidateOpts.sourceFolder, '/node_modules/' + def + '/package.json'), "utf-8"))
-      definition: path.join(paths, `/node_modules/${def}/src/serviceDefinition.json`), 
+      definition: ((existsSync(path.join(paths, `/node_modules/${def}/src/serviceDefinition.json`))) ? path.join(paths, `/node_modules/${def}/src/serviceDefinition.json`) : path.join(paths, `/node_modules/${def}/src/schema.json`)),
       package: path.join(paths, `/node_modules/${def}/package.json`),
       // changelog: path.join(paths, `/node_modules/${def}/CHANGELOG.md`)
       changelog: ((existsSync(path.join(paths, `/node_modules/${def}/CHANGELOG.md`))) ? path.join(paths, `/node_modules/${def}/CHANGELOG.md`) : undefined)

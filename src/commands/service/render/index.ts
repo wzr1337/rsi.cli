@@ -181,7 +181,6 @@ export async function parseSchemas(serviceDefs: Object):Promise<ISchema> {
   };
   if (Object.keys(serviceDefs).length === 0) throw new Error('passed empty service definition(s)');
   for (const schemaPath in serviceDefs) {
-
     try {
       // check file availablity
       fs.accessSync(serviceDefs[schemaPath], fs.constants.R_OK);
