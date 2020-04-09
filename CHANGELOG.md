@@ -1,3 +1,32 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/wzr1337/rsi.cli/compare/v0.3.1...v0.4.0) (2020-04-09)
+
+
+### Bug Fixes
+
+* **cli:** fixed a typo ([8c5145f](https://github.com/wzr1337/rsi.cli/commit/8c5145f))
+* **init:** changed author to an object rather than a string ([6ba47ee](https://github.com/wzr1337/rsi.cli/commit/6ba47ee))
+* **init/package:** when using init, author was coming out as [object Object], corrected issue, passing correct data ([42d8484](https://github.com/wzr1337/rsi.cli/commit/42d8484))
+* **sideNav:** was referencing the same general information and changelog ([3aa4fcd](https://github.com/wzr1337/rsi.cli/commit/3aa4fcd))
+* **template:** changed schema to service definitions ([0132030](https://github.com/wzr1337/rsi.cli/commit/0132030))
+* **template:** changed schema to service definitions ([c934408](https://github.com/wzr1337/rsi.cli/commit/c934408))
+* **testing:** fixed test methods and updated them with refactor ([2d95c86](https://github.com/wzr1337/rsi.cli/commit/2d95c86))
+
+
+### Features
+
+* **changelog:** cli can now find changelog of bundle and include it in documentation ([109eb1f](https://github.com/wzr1337/rsi.cli/commit/109eb1f))
+* **document:** can now create a single document for bundles ([e4876b6](https://github.com/wzr1337/rsi.cli/commit/e4876b6))
+* **html template:** redisigned it with collapsable sections ([e179dae](https://github.com/wzr1337/rsi.cli/commit/e179dae))
+* **markdown:** combined document func with markdown, now can do both in one, and now can generate just markdowns ([8fa4320](https://github.com/wzr1337/rsi.cli/commit/8fa4320))
+* **readMe:** updated readme to specify bundle and bundle options ([1a30887](https://github.com/wzr1337/rsi.cli/commit/1a30887))
+* **render:** can now render a class uml from a bundle with multiple services ([186480c](https://github.com/wzr1337/rsi.cli/commit/186480c))
+* **SD and Schema:** now checks if serviceDefinition exists, if not use schema ([7ae420c](https://github.com/wzr1337/rsi.cli/commit/7ae420c))
+* **TOC:** unified the table of contents, there is only one containing all resources and types for all services ([1e0fb9d](https://github.com/wzr1337/rsi.cli/commit/1e0fb9d))
+* **validate:** can now validate multiple service definition in a bundle at one time ([7d51344](https://github.com/wzr1337/rsi.cli/commit/7d51344))
+
+
+
 <a name="0.3.1"></a>
 ## [0.3.1](https://github.com/wzr1337/rsi.cli/compare/v0.3.0...v0.3.1) (2019-12-14)
 
