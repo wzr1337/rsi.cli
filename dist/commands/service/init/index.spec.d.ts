@@ -3,7 +3,10 @@ export interface PackageJSON {
     version: String;
     description: String;
     files: String[];
-    author: String;
+    author: {
+        name: string;
+        email: string;
+    };
     contributors: String;
     license: String;
     private: Boolean;

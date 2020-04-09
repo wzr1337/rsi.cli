@@ -7,7 +7,10 @@ export interface PackageJSON {
   version:String,
   description:String,
   files: String[],
-  author: String,
+  author: {
+    name: string,
+    email: string
+  },
   contributors: String,
   license: String,
   private: Boolean,
@@ -21,7 +24,7 @@ const DEFAULT_OPTIONS:serviceMeta = { name: "rsi.service.test", author: "Patrick
 
 describe("service command init", function() {
   it("should return a valid package structure", function() {
-    const expectedPaths:String[] = ["/package.json", "/src/schema.json", "/README.md", "/doc/main.md", "/.gitignore"];
+    const expectedPaths:String[] = ["/package.json", "/src/serviceDefinition.json", "/README.md", "/doc/main.md", "/.gitignore"];
     let generatedPaths:String[] = [];
     initService(DEFAULT_OPTIONS)
       .on("data", (data:any) => {
@@ -48,8 +51,11 @@ describe("service command init", function() {
         expect(pkg.name).toBe(DEFAULT_OPTIONS.name);
 
         expect(pkg.author).toBeDefined();
-        expect(typeof(pkg.author)).toBe("string");
-        expect(pkg.author).toBe(`${DEFAULT_OPTIONS.author} <${DEFAULT_OPTIONS.email}>`);
+        expect(typeof(pkg.author)).toBe("object");
+        expect(pkg.author.name).toBeDefined();
+        expect(pkg.author.name).toBe(DEFAULT_OPTIONS.author);
+        expect(pkg.author.email).toBeDefined();
+        expect(pkg.author.email).toBe(DEFAULT_OPTIONS.email);
 
         expect(pkg.description).toBeDefined();
         expect(typeof(pkg.description)).toBe("string");
@@ -57,7 +63,7 @@ describe("service command init", function() {
 
         expect(pkg.files).toBeDefined();
         expect(isArray(pkg.files)).toBe(true);
-        expect(pkg.files).toContain("src/schema.json");
+        expect(pkg.files).toContain("src/serviceDefinition.json");
 
         expect(pkg.version).toBeDefined();
         expect(typeof(pkg.version)).toBe("string");
@@ -96,11 +102,11 @@ describe("service command init", function() {
       });
   });
 
-  it("should return a valid src/schema.json", function() {
+  it("should return a valid src/serviceDefinition.json", function() {
     let schema:any;
     initService(DEFAULT_OPTIONS)
       .on("data", (data:any) => {
-        if (data.path === "/src/schema.json") {
+        if (data.path === "/src/serviceDefinition.json") {
           schema = JSON.parse(data.contents.toString());
         };
       })
