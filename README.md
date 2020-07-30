@@ -118,7 +118,7 @@ Usage: `rsi <commands...> [options...]`
   ```
 
   After you initialized the repository, you can start editing the `src/schema.json` file. Please be aware that it must comply with the
-  schema definition found under [<https://github.com/wzr1337/rsi.schema/blob/master/doc/schema.spec.md].>
+  schema definition found under <https://github.com/wzr1337/rsi.schema/blob/master/doc/schema.spec.md>
 
   ![RSI.cli](https://raw.githubusercontent.com/wzr1337/rsi.cli/master/assets/rsi.cli.gif)
 
