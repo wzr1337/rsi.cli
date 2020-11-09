@@ -109,7 +109,7 @@ function optiondocument(serviceArgv, bundle, html) {
         changelog: ((existsSync(path.join(serviceDocumentOpts.sourceFolder, "./changelog.md"))) ? path.join(serviceDocumentOpts.sourceFolder, "./changelog.md") : undefined)
       }
     }
-    service.renderDoc(pathsObj, bundle, packageInfo, html).then(data => {
+    service.renderDoc(pathsObj, packageInfo, html).then(data => {
       data.pipe(vfs.dest(serviceDocumentOpts.output));
       Logger.success("Documented scuccessfully")
     });//.catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
@@ -122,7 +122,7 @@ function optiondocument(serviceArgv, bundle, html) {
           monitor.on("changed", (where) => {
             // Handle file changes
             Logger.info(`Change detected in ${where}.`);
-            service.renderDoc(pathsObj, bundle, packageInfo, html).then(data => {
+            service.renderDoc(pathsObj, packageInfo, html).then(data => {
               data.pipe(vfs.dest(serviceDocumentOpts.output));
               Logger.success("Documented scuccessfully");
             }).catch(err => Logger.error("Documentation failed:", JSON.stringify(err, undefined, 2)));
