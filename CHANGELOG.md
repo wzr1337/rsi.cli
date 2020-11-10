@@ -1,3 +1,13 @@
+<a name="0.4.2"></a>
+## [0.4.2](https://github.com/wzr1337/rsi.cli/compare/v0.4.1...v0.4.2) (2020-11-10)
+
+
+### Bug Fixes
+
+* **document:** can no render html document and markdowm for a single service ([57305e0](https://github.com/wzr1337/rsi.cli/commit/57305e0))
+
+
+
 <a name="0.4.1"></a>
 ## [0.4.1](https://github.com/wzr1337/rsi.cli/compare/v0.4.0...v0.4.1) (2020-04-09)
 
