@@ -189,14 +189,14 @@ export async function compileMD (data: Object, pathToTemplates:string) {
 
   const templates = await loadTemplates(pathToTemplates);
   var serviceOverview = templates["$index.md"];
-
   return Handlebars.compile(serviceOverview)(data);
 }
 
 // export async function renderDoc(schemaPath:string, packagePath: string, changelogPath?: string):Promise<Readable> {
-export async function renderDoc(obj: Object, bundle: boolean, packageInfo: Object, _compileHTML: boolean):Promise<Readable> {
+export async function renderDoc(obj: Object, packageInfo: Object, _compileHTML: boolean):Promise<Readable> {
   return new Promise<Readable>((resolve, reject) => {
-    ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
+    // ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
+    ASSESTS_PATH = path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates")
     marked.setOptions({
       renderer: new marked.Renderer(),
       highlight: function(code) {
