@@ -1,3 +1,13 @@
+<a name="0.4.6"></a>
+## [0.4.6](https://github.com/wzr1337/rsi.cli/compare/v0.4.5...v0.4.6) (2021-03-15)
+
+
+### Bug Fixes
+
+* **service.init:** yet another attempt to fix ignorance of template files ([71c5e92](https://github.com/wzr1337/rsi.cli/commit/71c5e92))
+
+
+
 <a name="0.4.5"></a>
 ## [0.4.5](https://github.com/wzr1337/rsi.cli/compare/v0.4.4...v0.4.5) (2021-03-15)
 
