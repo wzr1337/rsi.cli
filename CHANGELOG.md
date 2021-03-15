@@ -1,3 +1,13 @@
+<a name="0.4.3"></a>
+## [0.4.3](https://github.com/wzr1337/rsi.cli/compare/v0.4.2...v0.4.3) (2021-03-15)
+
+
+### Bug Fixes
+
+* **general:** re-add dist folder ([b4a9cbe](https://github.com/wzr1337/rsi.cli/commit/b4a9cbe))
+
+
+
 <a name="0.4.2"></a>
 ## [0.4.2](https://github.com/wzr1337/rsi.cli/compare/v0.4.1...v0.4.2) (2020-11-10)
 
