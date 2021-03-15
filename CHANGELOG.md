@@ -1,3 +1,13 @@
+<a name="0.4.4"></a>
+## [0.4.4](https://github.com/wzr1337/rsi.cli/compare/v0.4.3...v0.4.4) (2021-03-15)
+
+
+### Bug Fixes
+
+* **service.init:** fixes .gitignore missing issue with newer npm version ([951441f](https://github.com/wzr1337/rsi.cli/commit/951441f))
+
+
+
 <a name="0.4.3"></a>
 ## [0.4.3](https://github.com/wzr1337/rsi.cli/compare/v0.4.2...v0.4.3) (2021-03-15)
 
