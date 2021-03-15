@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { Readable } from "stream";
 import { ISchema } from "./interfaces";
 /**

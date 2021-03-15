@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { Readable } from "stream";
 export interface serviceMeta {
     description?: String;
