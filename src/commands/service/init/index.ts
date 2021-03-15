@@ -67,7 +67,7 @@ export function init(opts:serviceMeta):Readable {
     cwd: '/',
     base: '/',
     path: '/.gitignore',
-    contents: fs.readFileSync(path.join(__dirname, "../../../../assets/repo.template/.gitignore"))
+    contents: fs.readFileSync(path.join(__dirname, "../../../../assets/repo.template/tpl.gitignore"))
   }));
 
   // render serviceDefinition.json

@@ -3,17 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.printHelp = exports.renderDoc = exports.parseSchemas = exports.loadTemplates = exports.render = exports.validate = exports.init = void 0;
 const command_line_usage_1 = __importDefault(require("command-line-usage"));
 var init_1 = require("./init");
-exports.init = init_1.init;
+Object.defineProperty(exports, "init", { enumerable: true, get: function () { return init_1.init; } });
 var validate_1 = require("./validate");
-exports.validate = validate_1.validate;
+Object.defineProperty(exports, "validate", { enumerable: true, get: function () { return validate_1.validate; } });
 var render_1 = require("./render");
-exports.render = render_1.render;
-exports.loadTemplates = render_1.loadTemplates;
-exports.parseSchemas = render_1.parseSchemas;
+Object.defineProperty(exports, "render", { enumerable: true, get: function () { return render_1.render; } });
+Object.defineProperty(exports, "loadTemplates", { enumerable: true, get: function () { return render_1.loadTemplates; } });
+Object.defineProperty(exports, "parseSchemas", { enumerable: true, get: function () { return render_1.parseSchemas; } });
 var document_1 = require("./document");
-exports.renderDoc = document_1.renderDoc;
+Object.defineProperty(exports, "renderDoc", { enumerable: true, get: function () { return document_1.renderDoc; } });
 const sections = [
     {
         header: "rsi service",
@@ -36,4 +37,4 @@ function printHelp() {
     console.log(usage);
 }
 exports.printHelp = printHelp;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvY29tbWFuZHMvc2VydmljZS9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7OztBQUFBLDRFQUFrRDtBQUNsRCwrQkFBMkM7QUFBbEMsc0JBQUEsSUFBSSxDQUFBO0FBQ2IsdUNBQXNDO0FBQTdCLDhCQUFBLFFBQVEsQ0FBQTtBQUNqQixtQ0FBK0Q7QUFBdEQsMEJBQUEsTUFBTSxDQUFBO0FBQUUsaUNBQUEsYUFBYSxDQUFBO0FBQUUsZ0NBQUEsWUFBWSxDQUFBO0FBQzVDLHVDQUF1QztBQUE5QiwrQkFBQSxTQUFTLENBQUE7QUFFbEIsTUFBTSxRQUFRLEdBQUc7SUFDZjtRQUNFLE1BQU0sRUFBRSxhQUFhO1FBQ3JCLE9BQU8sRUFBRSxtQ0FBbUM7S0FDN0M7SUFDRDtRQUNFLE1BQU0sRUFBRSxVQUFVO1FBQ2xCLE9BQU8sRUFBRTtZQUNQLEVBQUUsSUFBSSxFQUFFLFVBQVUsRUFBRSxPQUFPLEVBQUUsK0NBQStDLEVBQUU7WUFDOUUsRUFBRSxJQUFJLEVBQUUsTUFBTSxFQUFFLE9BQU8sRUFBRSw2QkFBNkIsRUFBRTtZQUN4RCxFQUFFLElBQUksRUFBRSxTQUFTLEVBQUUsT0FBTyxFQUFFLDZCQUE2QixFQUFFO1lBQzNELEVBQUUsSUFBSSxFQUFFLFFBQVEsRUFBRSxPQUFPLEVBQUUsd0JBQXdCLEVBQUU7WUFDckQsRUFBRSxJQUFJLEVBQUUsVUFBVSxFQUFFLE9BQU8sRUFBRSxtREFBbUQsRUFBRTtZQUNsRixFQUFFLElBQUksRUFBRSxVQUFVLEVBQUUsT0FBTyxFQUFFLG1CQUFtQixFQUFFO1NBQ25EO0tBQ0Y7Q0FDRixDQUFBO0FBQ0QsTUFBTSxLQUFLLEdBQUcsNEJBQWdCLENBQUMsUUFBUSxDQUFDLENBQUE7QUFFeEMsU0FBZ0IsU0FBUztJQUN2QixPQUFPLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFBO0FBQ3BCLENBQUM7QUFGRCw4QkFFQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvY29tbWFuZHMvc2VydmljZS9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7QUFBQSw0RUFBa0Q7QUFDbEQsK0JBQTJDO0FBQWxDLDRGQUFBLElBQUksT0FBQTtBQUNiLHVDQUFzQztBQUE3QixvR0FBQSxRQUFRLE9BQUE7QUFDakIsbUNBQStEO0FBQXRELGdHQUFBLE1BQU0sT0FBQTtBQUFFLHVHQUFBLGFBQWEsT0FBQTtBQUFFLHNHQUFBLFlBQVksT0FBQTtBQUM1Qyx1Q0FBdUM7QUFBOUIscUdBQUEsU0FBUyxPQUFBO0FBRWxCLE1BQU0sUUFBUSxHQUFHO0lBQ2Y7UUFDRSxNQUFNLEVBQUUsYUFBYTtRQUNyQixPQUFPLEVBQUUsbUNBQW1DO0tBQzdDO0lBQ0Q7UUFDRSxNQUFNLEVBQUUsVUFBVTtRQUNsQixPQUFPLEVBQUU7WUFDUCxFQUFFLElBQUksRUFBRSxVQUFVLEVBQUUsT0FBTyxFQUFFLCtDQUErQyxFQUFFO1lBQzlFLEVBQUUsSUFBSSxFQUFFLE1BQU0sRUFBRSxPQUFPLEVBQUUsNkJBQTZCLEVBQUU7WUFDeEQsRUFBRSxJQUFJLEVBQUUsU0FBUyxFQUFFLE9BQU8sRUFBRSw2QkFBNkIsRUFBRTtZQUMzRCxFQUFFLElBQUksRUFBRSxRQUFRLEVBQUUsT0FBTyxFQUFFLHdCQUF3QixFQUFFO1lBQ3JELEVBQUUsSUFBSSxFQUFFLFVBQVUsRUFBRSxPQUFPLEVBQUUsbURBQW1ELEVBQUU7WUFDbEYsRUFBRSxJQUFJLEVBQUUsVUFBVSxFQUFFLE9BQU8sRUFBRSxtQkFBbUIsRUFBRTtTQUNuRDtLQUNGO0NBQ0YsQ0FBQTtBQUNELE1BQU0sS0FBSyxHQUFHLDRCQUFnQixDQUFDLFFBQVEsQ0FBQyxDQUFBO0FBRXhDLFNBQWdCLFNBQVM7SUFDdkIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxLQUFLLENBQUMsQ0FBQTtBQUNwQixDQUFDO0FBRkQsOEJBRUMifQ==
