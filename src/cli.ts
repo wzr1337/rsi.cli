@@ -186,7 +186,7 @@ function optionRender(serviceArgv, bundle) {
   } else {
     const _type = (bundle) ? 'bundle' : 'service';
     Logger.error("One or more parameter missing");
-    Logger.info(`Usage: $ rsi ${_type} document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`);
+    Logger.info(`Usage: $ rsi ${_type} render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`);
   }
 }
 
@@ -222,7 +222,7 @@ function optionValidate(serviceArgv, bundle) {
   } else {
     const _type = (bundle) ? 'bundle' : 'service';
     Logger.error("One or more parameter missing");
-    Logger.info(`Usage: $ rsi ${_type} document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`);
+    Logger.info(`Usage: $ rsi ${_type} validate --sourceFolder <pathToServiceFolder>`);
   }
 }
 
