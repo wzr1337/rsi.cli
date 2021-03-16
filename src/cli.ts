@@ -131,8 +131,9 @@ function optiondocument(serviceArgv, bundle, html) {
       }
     }
   } else {
+    const _type = (bundle) ? 'bundle' : 'service';
     Logger.error("One or more parameter missing");
-    Logger.info("Usage: $ rsi service document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
+    Logger.info(`Usage: $ rsi ${_type} document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`);
   }
 }
 
@@ -183,8 +184,9 @@ function optionRender(serviceArgv, bundle) {
       }
     }
   } else {
+    const _type = (bundle) ? 'bundle' : 'service';
     Logger.error("One or more parameter missing");
-    Logger.info("Usage:\n$ rsi service render --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>");
+    Logger.info(`Usage: $ rsi ${_type} document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`);
   }
 }
 
@@ -218,8 +220,9 @@ function optionValidate(serviceArgv, bundle) {
       }
     }
   } else {
+    const _type = (bundle) ? 'bundle' : 'service';
     Logger.error("One or more parameter missing");
-    console.log("Usage: $ rsi service validate --sourceFolder <pathToServiceFolder>");
+    Logger.info(`Usage: $ rsi ${_type} document --sourceFolder <pathToServiceFolder> --output <pathToOutputFolder>`);
   }
 }
 
