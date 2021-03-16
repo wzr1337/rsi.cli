@@ -43,7 +43,7 @@
         {{/each}}
         <div id="rsilogo">
           &nbsp;<br>
-          by Patrick Bartsch &copy; 2019
+          <p id="copyrYear"></p>
         </div>
       </div>
       <div class="content-container">
@@ -57,11 +57,15 @@
     </div>
     <script src="./js/vueMat.js"></script>
     <script>
+      let currentYear = 'Hello World!';//new Date().getFullYear();
       Vue.use(VueMaterial.default)
 
       new Vue({
         el: '#app'
       })
+    </script>
+    <script>
+      document.getElementById('copyrYear').innerHTML = '&copy; by Dr. Patrick Bartsch ' + new Date().getFullYear();
     </script>
   </body>
 </html>
