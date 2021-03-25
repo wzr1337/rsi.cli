@@ -6,8 +6,6 @@ sudo: required
 # this is a node project
 language: node_js
 node_js:
-- '8'
-- '9'
 - 'node'
 
 addons:
