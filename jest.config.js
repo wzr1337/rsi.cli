@@ -58,11 +58,11 @@ module.exports = {
   // globalTeardown: null,
 
   // A set of global variables that need to be available in all test environments
-  globals: {
+/*   globals: {
     "ts-jest": {
       "tsConfigFile": "tsconfig.json"
     }
-  },
+  }, */
 
   // An array of directory names to be searched recursively up from the requiring module's location
   // moduleDirectories: [
@@ -110,7 +110,15 @@ module.exports = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  rootDir: "./dist",
+  //rootDir: "./src",
+
+  roots: [
+    '<rootDir>/src'
+  ],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest'
+  },
+  
 
   // A list of paths to directories that Jest should use to search for files in
   // roots: [
@@ -124,13 +132,13 @@ module.exports = {
   // setupFiles: [],
 
   // The path to a module that runs some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ["<rootDir>/__mocks__/setup.js"],
+  setupFilesAfterEnv: ["./src/__mocks__/setup.ts"],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "node",
+  // testEnvironment: "node",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -140,7 +148,8 @@ module.exports = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-    "<rootDir>/**/*(*.)@(spec|test).js"
+    "**/*(*.)@(spec|test).js",
+    '**/*.spec.ts'
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped

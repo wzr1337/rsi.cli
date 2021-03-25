@@ -61,9 +61,7 @@ describe("service command init", function() {
         expect(typeof(pkg.description)).toBe("string");
         expect(pkg.description).toBe("This service lacks description, please fill it in.");
 
-        expect(pkg.files).toBeDefined();
-        expect(isArray(pkg.files)).toBe(true);
-        expect(pkg.files).toContain("src/serviceDefinition.json");
+        expect(pkg.files).not.toBeDefined();
 
         expect(pkg.version).toBeDefined();
         expect(typeof(pkg.version)).toBe("string");
