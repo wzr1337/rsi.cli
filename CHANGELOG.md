@@ -1,3 +1,14 @@
+<a name="0.4.7"></a>
+## [0.4.7](https://github.com/wzr1337/rsi.cli/compare/v0.4.6...v0.4.7) (2023-01-29)
+
+
+### Bug Fixes
+
+* **render:** fix date rendering and bundle vs service rendering ([4b866e5](https://github.com/wzr1337/rsi.cli/commit/4b866e5))
+* **travis:** update travis build script ([c642f59](https://github.com/wzr1337/rsi.cli/commit/c642f59))
+
+
+
 <a name="0.4.6"></a>
 ## [0.4.6](https://github.com/wzr1337/rsi.cli/compare/v0.4.5...v0.4.6) (2021-03-15)
 
