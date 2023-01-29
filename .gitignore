@@ -83,3 +83,5 @@ typings/
 temp
 src/schema.json
 classDiagram.puml
+
+.DS_Store

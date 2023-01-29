@@ -110,6 +110,10 @@ Handlebars.registerHelper('safeString', function(str) {
   }
 });
 
+Handlebars.registerHelper('getYear', function() {
+  return new Handlebars.SafeString((new Date()).getUTCFullYear().toString());
+});
+
 Handlebars.registerHelper('resourceLevelAction', function(method) {
 //          Handlebars.log("ERROR", "hi");
   switch (method.toUpperCase()) {
@@ -193,10 +197,9 @@ export async function compileMD (data: Object, pathToTemplates:string) {
 }
 
 // export async function renderDoc(schemaPath:string, packagePath: string, changelogPath?: string):Promise<Readable> {
-export async function renderDoc(obj: Object, packageInfo: Object, _compileHTML: boolean):Promise<Readable> {
+export async function renderDoc(obj: Object, packageInfo: Object, bundle: boolean = false, _compileHTML: boolean = false):Promise<Readable> {
   return new Promise<Readable>((resolve, reject) => {
-    // ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
-    ASSESTS_PATH = path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates")
+    ASSESTS_PATH = ((bundle) ? path.join(path.dirname(__filename), "../../../../assets/documentation.bundle.templates") : path.join(path.dirname(__filename), "../../../../assets/documentation.templates"))
     marked.setOptions({
       renderer: new marked.Renderer(),
       highlight: function(code) {
